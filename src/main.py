@@ -1,8 +1,6 @@
-import sys
-import grid
-
+import game
 
 if __name__ == "__main__":
     # Instantiation of a grid
-    grid = grid.Grid()
+    game = game.Game()
 
