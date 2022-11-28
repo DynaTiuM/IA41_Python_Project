@@ -77,7 +77,7 @@ class Grid(QMainWindow):
         for t in self.towers:
             size = 0.9
 
-            for i in t:
+            for i in reversed(t):
                 if i.color == 'white':
                     p.setBrush(QtGui.QColor(220, 220, 220))
                 elif i.color == 'black':
@@ -110,58 +110,81 @@ class Grid(QMainWindow):
                     # If this is the case,
                     if j == tower[0].x and i == tower[0].y:
                         self.move_to(1, j, i, tower, False)
-                        self.repaint()
                         return
 
                 # No tower exists, the new position is free
                 self.move_to(1, j, i, self.towers, True)
-                self.repaint()
 
                 return
 
             elif self.distance(self.temp_click_j, self.temp_click_i, j, i) == 2:
-                if len(self.ref) == 2:
-                    return
+                if len(self.ref) >= 2:
+                    self.clicked = False
+                    # Searching for if a tower already exists on the new position
+                    for tower in self.towers:
+                        # If this is the case,
+                        if j == tower[0].x and i == tower[0].y:
+                            self.move_to(2, j, i, tower, False)
+                            return
+
+                    # No tower exists, the new position is free
+                    self.move_to(2, j, i, self.towers, True)
                 else:
                     print("You don't have enough pawns!")
 
             elif self.distance(self.temp_click_j, self.temp_click_i, j, i) == 3:
-                print("soon")
+                if len(self.ref) >= 3:
+                    self.clicked = False
+                    # Searching for if a tower already exists on the new position
+                    for tower in self.towers:
+                        # If this is the case,
+                        if j == tower[0].x and i == tower[0].y:
+                            self.move_to(3, j, i, tower, False)
+                            return
 
-            print(self.distance(self.temp_click_j, self.temp_click_i, j, i))
+                    # No tower exists, the new position is free
+                    self.move_to(3, j, i, self.towers, True)
+                else:
+                    print("You don't have enough pawns!")
+
+            else:
+                print("-1")
 
             return
 
     def move_to(self, amount, x, y, tower, isFree):
-        temp = tower
+
         for i in range(amount):
             # New position of the pawns
-            self.ref[i].x = x
-            self.ref[i].y = y
+            self.ref[0].x = x
+            self.ref[0].y = y
             # We add to pawns list the pawns that we move
-            if isFree:
-                self.pawns.append(self.ref[i])
-            else:
-                temp.append(self.ref[i])
+
+            self.pawns.append(self.ref[0])
             # We remove the pawn from the latest location
             self.ref.pop(0)
-            # if self.ref is NULL
-            if not self.ref:
-                # We remove it from the towers list
-                self.towers.remove(self.ref)
+
+        if not isFree:
+            for pawn in self.pawns:
+                tower.insert(0, pawn)
+
+        # if self.ref is NULL
+        if not self.ref:
+            # We remove it from the towers list
+            self.towers.remove(self.ref)
 
         if isFree:
             self.towers.append(self.pawns)
-        else:
-            self.towers.remove(tower)
-            self.towers.append(temp)
         self.pawns = []
         self.ref = None
+
+        print(self.towers)
+
+        self.repaint()
 
         return
 
     def distance(self, x, y, dx, dy):
-
         # 1 place moving
         if (dx == x + 1 or dx == x - 1) and dy == y:
             return 1
@@ -169,10 +192,11 @@ class Grid(QMainWindow):
             return 1
 
         # 2 places moving
-        if dx == x + 1 or dx == x - 1 and dy != y:
-            return 2
-        if dy == y + 1 or dy == y - 1 and dx != x:
-            return 2
+        # Non corrects :
+        # if dx == x + 1 or dx == x - 1 and dy != y:
+        #    return 2
+        # if dy == y + 1 or dy == y - 1 and dx != x:
+        #    return 2
         if dy == y + 2 and dx == x:
             return 2
         if dx == x + 2 and dy == y:
