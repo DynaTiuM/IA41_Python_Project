@@ -87,7 +87,7 @@ class Grid(QMainWindow):
                               i.y * int(self.block_size_y) + int(self.block_size_y) * (1 - size) / 2,
                               int(self.block_size_x * size),
                               int(self.block_size_y * size))
-                size = size - 0.2
+                size = size - 0.05
 
     def mousePressEvent(self, e):
         width = self.width() // 3
@@ -98,7 +98,6 @@ class Grid(QMainWindow):
         if not self.clicked:
             for t in self.towers:
                 if j == t[0].x and i == t[0].y:
-                    print(t)
                     self.ref = t
                     self.temp_click_j = j
                     self.temp_click_i = i
@@ -107,37 +106,15 @@ class Grid(QMainWindow):
             if self.distance(self.temp_click_j, self.temp_click_i, j, i) == 1:
                 self.clicked = False
                 # Searching for if a tower already exists on the new position
-                for t in self.towers:
+                for tower in self.towers:
                     # If this is the case,
-                    if j == t[0].x and i == t[0].y:
-                        self.ref[0].x = j
-                        self.ref[0].y = i
-                        # We add the pawn into the pawns list
-                        self.pawns.append(self.ref[0])
-                        # We add it to the tower list
-                        t.append(self.pawns)
-                        self.pawns = []
-                        # We remove it from the previous list
-                        self.ref[0].pop()
-                        if not self.ref:
-                            del self.ref
-                        # Need to verify if really need this :
-                        self.ref = None
+                    if j == tower[0].x and i == tower[0].y:
+                        self.move_to(1, j, i, tower, False)
+                        self.repaint()
                         return
 
                 # No tower exists, the new position is free
-                self.ref[0].x = j
-                self.ref[0].y = i
-                self.pawns.append(self.ref[0])
-                self.towers.append(self.pawns)
-                self.ref.pop(0)
-                if not self.ref:
-                    self.towers.remove(self.ref)
-                self.pawns = []
-                # Need to verify if really need this :
-                self.ref = None
-                print(self.towers)
-
+                self.move_to(1, j, i, self.towers, True)
                 self.repaint()
 
                 return
@@ -154,6 +131,34 @@ class Grid(QMainWindow):
             print(self.distance(self.temp_click_j, self.temp_click_i, j, i))
 
             return
+
+    def move_to(self, amount, x, y, tower, isFree):
+        temp = tower
+        for i in range(amount):
+            # New position of the pawns
+            self.ref[i].x = x
+            self.ref[i].y = y
+            # We add to pawns list the pawns that we move
+            if isFree:
+                self.pawns.append(self.ref[i])
+            else:
+                temp.append(self.ref[i])
+            # We remove the pawn from the latest location
+            self.ref.pop(0)
+            # if self.ref is NULL
+            if not self.ref:
+                # We remove it from the towers list
+                self.towers.remove(self.ref)
+
+        if isFree:
+            self.towers.append(self.pawns)
+        else:
+            self.towers.remove(tower)
+            self.towers.append(temp)
+        self.pawns = []
+        self.ref = None
+
+        return
 
     def distance(self, x, y, dx, dy):
 
