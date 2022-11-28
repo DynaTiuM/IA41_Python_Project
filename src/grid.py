@@ -1,3 +1,5 @@
+import math
+
 import pawn
 import sys
 
@@ -185,25 +187,11 @@ class Grid(QMainWindow):
         return
 
     def distance(self, x, y, dx, dy):
-        # 1 place moving
-        if (dx == x + 1 or dx == x - 1) and dy == y:
-            return 1
-        if (dy == y + 1 or dy == y - 1) and dx == x:
-            return 1
 
-        # 2 places moving
-        # Non corrects :
-        # if dx == x + 1 or dx == x - 1 and dy != y:
-        #    return 2
-        # if dy == y + 1 or dy == y - 1 and dx != x:
-        #    return 2
-        if dy == y + 2 and dx == x:
-            return 2
-        if dx == x + 2 and dy == y:
-            return 2
+        dist = math.sqrt(math.pow((dx - x), 2) + math.pow((dy - y), 2))
 
-        # 3 places moving
-        if dy != y + 2 and dx != x + 2 and dy != y - 2 and dx != x - 2:
+        if dist == 1:
+            return 1
+        elif dist > 2:
             return 3
-
-        return -1
+        return 2
