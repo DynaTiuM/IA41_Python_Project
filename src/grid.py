@@ -1,15 +1,21 @@
 import math
 
+from PySide6.QtCore import QRect, Qt
+from PySide6.QtGui import QFont
+from PySide6.examples.widgets.painting.painter import painter
+
 import pawn
 import sys
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel
 from PySide6 import QtCore, QtGui
 
 
 class Grid(QMainWindow):
     pawns = []
     towers = []
+    winner = "nobody"
+    turn = "white"
 
     clicked = False
     ref = None
@@ -91,68 +97,79 @@ class Grid(QMainWindow):
                               int(self.block_size_y * size))
                 size = size - 0.05
 
+        if self.winner != "nobody":
+            label_1 = QLabel(self.winner + " player won!", self)
+            label_1.move(int(self.window_size_x / 3), int(self.window_size_y / 2))
+            label_1.setFont(QFont('Arial', 60))
+            label_1.setFixedHeight(100)
+            label_1.setFixedWidth(400)
+            label_1.show()
+
     def mousePressEvent(self, e):
         width = self.width() // 3
         height = self.height() // 3
         j = e.x() // width
         i = e.y() // height
 
-        if not self.clicked:
-            for t in self.towers:
-                if j == t[0].x and i == t[0].y:
-                    self.ref = t
-                    self.temp_click_j = j
-                    self.temp_click_i = i
-                    self.clicked = True
-        else:
-            if self.distance(self.temp_click_j, self.temp_click_i, j, i) == 1:
-                self.clicked = False
-                # Searching for if a tower already exists on the new position
-                for tower in self.towers:
-                    # If this is the case,
-                    if j == tower[0].x and i == tower[0].y:
-                        self.move_to(1, j, i, tower, False)
-                        return
-
-                # No tower exists, the new position is free
-                self.move_to(1, j, i, self.towers, True)
-
-                return
-
-            elif self.distance(self.temp_click_j, self.temp_click_i, j, i) == 2:
-                if len(self.ref) >= 2:
-                    self.clicked = False
-                    # Searching for if a tower already exists on the new position
-                    for tower in self.towers:
-                        # If this is the case,
-                        if j == tower[0].x and i == tower[0].y:
-                            self.move_to(2, j, i, tower, False)
-                            return
-
-                    # No tower exists, the new position is free
-                    self.move_to(2, j, i, self.towers, True)
-                else:
-                    print("You don't have enough pawns!")
-
-            elif self.distance(self.temp_click_j, self.temp_click_i, j, i) == 3:
-                if len(self.ref) >= 3:
-                    self.clicked = False
-                    # Searching for if a tower already exists on the new position
-                    for tower in self.towers:
-                        # If this is the case,
-                        if j == tower[0].x and i == tower[0].y:
-                            self.move_to(3, j, i, tower, False)
-                            return
-
-                    # No tower exists, the new position is free
-                    self.move_to(3, j, i, self.towers, True)
-                else:
-                    print("You don't have enough pawns!")
-
+        if self.winner == "nobody":
+            if not self.clicked:
+                for t in self.towers:
+                    if j == t[0].x and i == t[0].y and t[0].color == self.turn:
+                        self.ref = t
+                        self.temp_click_j = j
+                        self.temp_click_i = i
+                        self.clicked = True
             else:
-                print("-1")
+                if self.turn == "white":
+                    self.turn = "black"
+                else:
+                    self.turn = "white"
+                if self.distance(self.temp_click_j, self.temp_click_i, j, i) == 1:
+                    self.clicked = False
+                    # Searching for if a tower already exists on the new position
+                    for tower in self.towers:
+                        # If this is the case,
+                        if j == tower[0].x and i == tower[0].y:
+                            self.move_to(1, j, i, tower, False)
+                            return
 
-            return
+                    # No tower exists, the new position is free
+                    self.move_to(1, j, i, self.towers, True)
+
+                    return
+
+                elif self.distance(self.temp_click_j, self.temp_click_i, j, i) == 2:
+                    if len(self.ref) >= 2:
+                        self.clicked = False
+                        # Searching for if a tower already exists on the new position
+                        for tower in self.towers:
+                            # If this is the case,
+                            if j == tower[0].x and i == tower[0].y:
+                                self.move_to(2, j, i, tower, False)
+                                return
+
+                        # No tower exists, the new position is free
+                        self.move_to(2, j, i, self.towers, True)
+                    else:
+                        print("You don't have enough pawns!")
+
+                elif self.distance(self.temp_click_j, self.temp_click_i, j, i) == 3:
+                    if len(self.ref) >= 3:
+                        self.clicked = False
+                        # Searching for if a tower already exists on the new position
+                        for tower in self.towers:
+                            # If this is the case,
+                            if j == tower[0].x and i == tower[0].y:
+                                self.move_to(3, j, i, tower, False)
+                                return
+
+                        # No tower exists, the new position is free
+                        self.move_to(3, j, i, self.towers, True)
+                    else:
+                        print("You don't have enough pawns!")
+            self.check_win()
+
+        self.repaint()
 
     def move_to(self, amount, x, y, tower, isFree):
 
@@ -195,3 +212,19 @@ class Grid(QMainWindow):
         elif dist > 2:
             return 3
         return 2
+
+    def check_win(self):
+        count_white = 0
+        count_black = 0
+        for t in self.towers:
+            if t[0].color == "white":
+                count_white += 1
+            if t[0].color == "black":
+                count_black += 1
+
+        if count_white == 0:
+            self.winner = "Black"
+            print("Black won!")
+        elif count_black == 0:
+            self.winner = "White"
+            print("White won!")
