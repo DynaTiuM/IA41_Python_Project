@@ -1,15 +1,15 @@
-import grid
+import controller
 
 
 class Game:
-    grid = 0
     game_mode = 0
     beginner = False
     selected_place = 0
 
     def __init__(self):
+        self.gamemode = None
+        self.controller = None
         self.ask()
-        self.grid = grid.Grid()
 
     def ask(self):
         answer = ''
@@ -26,6 +26,7 @@ class Game:
             answer = input("Would you like to begin the game ?")
             if answer == 'yes':
                 self.beginner = True
+                self.controller = controller.Controller(self.game_mode, self.beginner)
 
             else:
                 self.beginner = False
