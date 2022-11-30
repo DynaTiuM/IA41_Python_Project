@@ -1,10 +1,8 @@
 import controller
-
+import ia_mode_controller
 
 class Game:
     game_mode = 0
-    beginner = False
-    selected_place = 0
 
     def __init__(self):
         self.gamemode = None
@@ -13,7 +11,7 @@ class Game:
 
     def ask(self):
         answer = ''
-        while answer != 'solo' and 'ia':
+        while answer != ('solo' or 'ia'):
             answer = input("Choose your mode, solo or ia :")
             if answer == 'solo':
                 print("You chose solo mode")
@@ -23,14 +21,6 @@ class Game:
                 self.game_mode = 2
 
         if self.game_mode == 1:
-            answer = input("Would you like to begin the game ?")
-            if answer == 'yes':
-                self.beginner = True
-                self.controller = controller.Controller(self.game_mode, self.beginner)
-
-            else:
-                self.beginner = False
-
-    def move(self):
-        selected_placed = self.grid.cursor_place
-        print(selected_placed)
+            self.controller = controller.Controller(self.game_mode)
+        else:
+            self.controller = ia_mode_controller.IA_Mode_Controller(self.game_mode)

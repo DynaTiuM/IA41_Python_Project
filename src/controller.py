@@ -3,14 +3,13 @@ import model_player
 
 
 class Controller:
-    def __init__(self, mode, beginner):
+    def __init__(self, mode):
         self.temp_click_j = None
         self.temp_click_i = None
         self.clicked = False
         self.view = None
         self.model = None
         self.mode = mode
-        self.beginner = beginner
         self.launch()
         print("launching!")
 

@@ -104,17 +104,15 @@ class Model_Player:
         return 2
 
     def check_win(self):
-        count_white = 0
-        count_black = 0
+        white = False
+        black = False
         for t in self.towers:
             if t[0].color == "white":
-                count_white += 1
+                white = True
             if t[0].color == "black":
-                count_black += 1
+                black = True
 
-        if count_white == 0:
+        if not white:
             self.winner = "Black"
-            print("Black won!")
-        elif count_black == 0:
+        elif not black:
             self.winner = "White"
-            print("White won!")
