@@ -1,26 +1,25 @@
 import controller
 import ia_mode_controller
 
-class Game:
-    game_mode = 0
 
+class Game:
     def __init__(self):
-        self.gamemode = None
+        self.game_mode = None
         self.controller = None
         self.ask()
 
     def ask(self):
         answer = ''
-        while answer != ('solo' or 'ia'):
-            answer = input("Choose your mode, solo or ia :")
-            if answer == 'solo':
-                print("You chose solo mode")
+        while answer != 'players' and answer != 'ia and player' and answer != 'ia':
+            answer = input("Choose your mode, players, ia and player or ia :")
+            if answer == 'players':
+                print("You chose players mode")
                 self.game_mode = 1
-            elif answer == 'ia':
+            if answer == 'ia':
                 print("You chose ia mode")
                 self.game_mode = 2
+            if answer == 'ia and player':
+                print("You chose ia and player mode")
+                self.game_mode = 3
 
-        if self.game_mode == 1:
-            self.controller = controller.Controller(self.game_mode)
-        else:
-            self.controller = ia_mode_controller.IA_Mode_Controller(self.game_mode)
+        self.controller = controller.Controller(self.game_mode)

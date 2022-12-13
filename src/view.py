@@ -54,6 +54,8 @@ class View(QMainWindow):
             for i in reversed(t):
                 if i.color == 'white':
                     p.setBrush(QtGui.QColor(220, 220, 220))
+                    if self.ref_controller.is_selected():
+                        p.setPen(QPen(Qt.red, 3))
                     p.setPen(QPen(Qt.gray, 3))
                 elif i.color == 'black':
                     p.setBrush(QtGui.QColor(30, 15, 0))
