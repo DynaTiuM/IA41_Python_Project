@@ -1,16 +1,21 @@
 class State:
-
-    def __init__(self, model, tower, dx, dy, distance):
+    def __init__(self, model, tower, dx, dy, distance, root=False):
+        self.children = []
         self.tower = tower
-        self.x = tower[0].x
-        self.y = tower[0].y
-        self.dx = dx
-        self.dy = dy
-        self.distance = distance
+
+        if not root:
+            self.x = tower[0].x
+            self.y = tower[0].y
+            self.dx = dx
+            self.dy = dy
+            self.distance = distance
 
         self.adversary_tower = None
         self.sum = 0
         self.model = model
+
+    def add_child(self, child):
+        self.children.append(child)
 
     def calculate_heuristic(self):
         self.adversary_tower = self.model.determine_tower(self.dx, self.dy)
@@ -37,11 +42,11 @@ class State:
         if self.distance > len(self.tower) and self.adversary_tower is not None:
             return 0
         # No loss and gain
-        elif self.tower[self.distance - 1].color == self.model.get_color() and self.adversary_tower is not None\
+        elif self.tower[self.distance - 1].color == self.model.get_color() and self.adversary_tower is not None \
                 and self.tower[0].color != self.adversary_tower[0].color:
             return 2
         # Loss and gain
-        elif self.tower[self.distance - 1].color != self.model.get_color() and self.adversary_tower is not None\
+        elif self.tower[self.distance - 1].color != self.model.get_color() and self.adversary_tower is not None \
                 and self.tower[0].color != self.adversary_tower[0].color:
             return -1
         # Loss and no gain
@@ -61,3 +66,6 @@ class State:
 
     def end_of_game(self):
         pass
+
+    def destroy_children(self):
+        self.children.clear()

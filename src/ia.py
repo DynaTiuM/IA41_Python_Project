@@ -16,6 +16,13 @@ class IA:
                 self.towers_to_examine.append(tower)
 
     def action(self, i, j, towers):
+        decided_state = state.State(self.model, [0], 0, 0, 0, True)
+        self.model.minmax.min_max(decided_state, 2)
+        self.model.check_win()
+        self.model.switch_players()
+
+    def t(self, decided_state):
+        num_root = 0
         self.determine_all_towers()
         # 0 - 1 - 2
         for amount_moves in range(self.possible_moves):
@@ -27,8 +34,9 @@ class IA:
                     for y in range(3):
                         if self.model.distance(tower[0].x, tower[0].y, x, y) == distance \
                                 and len(tower) >= distance:
-                            self.states.append(state.State(self.model, tower, x, y, distance))
-
-        self.model.minmax.min_max(self.states, 1)
-        self.model.check_win()
-        self.model.switch_players()
+                            decided_state.add_child(state.State(self.model, tower, x, y, distance, False))
+                            num_root += 1
+        self.towers_to_examine.clear()
+        # self.model.decide_type_of_moving(decided_state.tower[0].x, decided_state.tower[0].y,
+        # decided_state.distance, self.model.towers)
+        print(num_root)

@@ -23,11 +23,11 @@ class Model:
         elif mode == 2:
             self.player1 = player.Player("white", True, self)
             self.player2 = ia.IA("black", False, self)
-            self.minmax = MinMax.MinMax(self)
+            self.minmax = MinMax.MinMax(self.player2, self)
         else:
             self.player1 = ia.IA("white", True, self)
             self.player2 = ia.IA("black", False, self)
-            self.minmax = MinMax.MinMax(self)
+            self.minmax = MinMax.MinMax(self.player2, self)
 
         print("New Model!")
 
