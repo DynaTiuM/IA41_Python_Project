@@ -64,8 +64,14 @@ class State:
 
     def instant_retake(self):
         for tower in self.model.towers:
-            if len(tower) >= self.model.distance(self.x, self.y, tower[0].x, tower[0].y):
-                return 0
+            distance = self.model.distance(self.x, self.y, tower[0].x, tower[0].y)
+            if len(tower) >= distance:
+                if tower[distance - 1].color != self.model.get_color():
+                    return 1
+                elif tower[distance - 1].color == self.model.get_color() and tower[0].x != 1 and tower[0].y != 1:
+                    return 1
+            elif tower[0].x == 1 and tower[0].y == 1:
+                return 3
             else:
                 return 2
 

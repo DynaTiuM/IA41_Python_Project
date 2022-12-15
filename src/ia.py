@@ -19,7 +19,7 @@ class IA:
     def action(self, i, j, towers):
         decided_state = state.State(self.model, [0], 0, 0, 0, True)
         minmax = MinMax.MinMax(self, self.model)
-        state_ = minmax.min_max(decided_state, 2)
+        state_ = minmax.min_max(decided_state, 1)
         self.model.ref = state_.tower
         print(state_.x)
         print(state_.y)
