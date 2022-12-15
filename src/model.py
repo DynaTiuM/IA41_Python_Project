@@ -59,6 +59,7 @@ class Model:
         else:
             return self.player2.color
 
+
     def determine_tower(self, x, y):
         for t in self.towers:
             if x == t[0].x and y == t[0].y:
