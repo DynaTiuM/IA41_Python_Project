@@ -1,5 +1,6 @@
 class State:
     def __init__(self, model, tower, dx, dy, distance, root=False):
+        self.root = root
         self.children = []
         self.tower = tower
 
@@ -22,7 +23,7 @@ class State:
 
         self.sum += self.take()
         self.sum += self.size()
-        # sum_ += self.instant_retake()
+        self.sum += self.instant_retake()
         # self.sum += self.end_of_game()
 
         temp_sum = self.sum
@@ -62,7 +63,11 @@ class State:
         return num - 1
 
     def instant_retake(self):
-        pass
+        for tower in self.model.towers:
+            if len(tower) >= self.model.distance(self.x, self.y, tower[0].x, tower[0].y):
+                return 0
+            else:
+                return 2
 
     def end_of_game(self):
         pass

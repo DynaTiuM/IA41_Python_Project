@@ -1,4 +1,5 @@
 import state
+import MinMax
 
 class IA:
     possible_moves = 3
@@ -17,11 +18,18 @@ class IA:
 
     def action(self, i, j, towers):
         decided_state = state.State(self.model, [0], 0, 0, 0, True)
-        self.model.minmax.min_max(decided_state, 2)
+        minmax = MinMax.MinMax(self, self.model)
+        state_ = minmax.min_max(decided_state, 2)
+        self.model.ref = state_.tower
+        print(state_.x)
+        print(state_.y)
+        self.model.decide_type_of_moving(state_.dx, state_.dy,
+                                         state_.distance, self.model.towers)
+
         self.model.check_win()
         self.model.switch_players()
 
-    def t(self, decided_state):
+    def determine_states(self, decided_state):
         num_root = 0
         self.determine_all_towers()
         # 0 - 1 - 2
@@ -37,6 +45,3 @@ class IA:
                             decided_state.add_child(state.State(self.model, tower, x, y, distance, False))
                             num_root += 1
         self.towers_to_examine.clear()
-        # self.model.decide_type_of_moving(decided_state.tower[0].x, decided_state.tower[0].y,
-        # decided_state.distance, self.model.towers)
-        print(num_root)
