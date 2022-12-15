@@ -1,5 +1,5 @@
 import view
-import model_player
+import model
 
 
 class Controller:
@@ -11,7 +11,7 @@ class Controller:
         print("launching!")
 
     def launch(self):
-        self.model = model_player.Model_Player(self, self.mode)
+        self.model = model.Model(self, self.mode)
         self.view = view.View(self)
 
     def get_towers(self):
@@ -32,12 +32,10 @@ class Controller:
         else:
             return self.model.player2
 
-    def action(self, j, i):
+    def action(self, x, y):
         if self.mode == 3:
             return
         print("new Action!")
         towers = self.get_towers()
 
-        player_action = self.get_turn()
-
-        player_action.action(j, i, towers)
+        self.get_turn().action(x, y, towers)

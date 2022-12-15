@@ -1,11 +1,11 @@
 import math
-
+import MinMax
 import pawn
 import ia
 import player
 
 
-class Model_Player:
+class Model:
     pawns = []
     towers = []
     winner = "nobody"
@@ -15,19 +15,20 @@ class Model_Player:
 
     def __init__(self, ref_controller, mode):
         self.ref_controller = ref_controller
+        self.mode = mode
 
         if mode == 1:
             self.player1 = player.Player("white", True, self)
             self.player2 = player.Player("black", False, self)
         elif mode == 2:
             self.player1 = player.Player("white", True, self)
-            self.player2 = ia.IA("black", False)
+            self.player2 = ia.IA("black", False, self)
+            self.minmax = MinMax.MinMax(self)
         else:
-            self.player1 = ia.IA("white", True)
-            self.player2 = ia.IA("black", False)
+            self.player1 = ia.IA("white", True, self)
+            self.player2 = ia.IA("black", False, self)
+            self.minmax = MinMax.MinMax(self)
 
-        self.temp_click_j = None
-        self.temp_click_i = None
         print("New Model!")
 
         # Creating the towers of white pawns
@@ -52,26 +53,44 @@ class Model_Player:
         if self.winner != "nobody":
             return self.winner
 
+    def get_color(self):
+        if self.player1.turn:
+            return self.player1.color
+        else:
+            return self.player2.color
+
+    def determine_tower(self, x, y):
+        for t in self.towers:
+            if x == t[0].x and y == t[0].y:
+                return t
+
     def is_winner(self):
         if self.winner != "nobody":
             return True
         return False
 
-    def decide_type_of_moving(self, j, i, number_of_moving):
-        if self.player1.turn:
-            self.player1.decide_type_of_moving(j, i, number_of_moving, self.towers)
-        else:
-            self.player2.decide_type_of_moving(j, i, number_of_moving, self.towers)
-
     def switch_players(self):
         if self.player1.turn:
             self.player1.turn = False
             self.player2.turn = True
+            if self.mode != 1:
+                self.ref_controller.action(None, None)
         else:
             self.player1.turn = True
             self.player2.turn = False
 
-    def move_to(self, amount, x, y, tower, isFree):
+    def decide_type_of_moving(self, x, y, number_of_moving, towers):
+        # Searching for if a tower already exists on the new position
+        for tower in towers:
+            # If this is the case,
+            if x == tower[0].x and y == tower[0].y:
+                self.move_to(number_of_moving, x, y, tower, False)
+                return
+
+        # No tower exists, the new position is free
+        self.move_to(number_of_moving, x, y, towers, True)
+
+    def move_to(self, amount, x, y, tower, is_free):
         for i in range(amount):
             # New position of the pawns
             self.ref[0].x = x
@@ -81,7 +100,7 @@ class Model_Player:
             # We remove the pawn from the latest location
             self.ref.pop(0)
 
-        if not isFree:
+        if not is_free:
             self.pawns += tower
             tower.clear()
             for p in self.pawns:
@@ -92,7 +111,7 @@ class Model_Player:
             # We remove it from the towers list
             self.towers.remove(self.ref)
 
-        if isFree:
+        if is_free:
             self.towers.append(self.pawns)
         self.pawns = []
         self.ref = None
