@@ -8,7 +8,7 @@ import player
 class Model:
     pawns = []
     towers = []
-    winner = "nobody"
+    winner = None
 
     clicked = False
     ref = None
@@ -75,7 +75,7 @@ class Model:
                 return t
 
     def is_winner(self):
-        if self.winner != "nobody":
+        if self.winner is not None:
             return True
         return False
 

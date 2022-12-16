@@ -7,10 +7,9 @@ class Player:
         self.color = color
         self.turn = turn
         self.clicked = False
-        self.winner = False
 
     def action(self, x, y, towers):
-        if not self.winner:
+        if not self.model.is_winner():
             print("No Winner")
             # First click of the player so that he can select a pawn to move:
             if not self.clicked:
