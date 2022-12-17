@@ -68,7 +68,6 @@ class Model:
         else:
             return self.player2.color
 
-
     def determine_tower(self, x, y):
         for t in self.towers:
             if x == t[0].x and y == t[0].y:
@@ -79,12 +78,15 @@ class Model:
             return True
         return False
 
+    def send_tower_clicked(self, tower):
+        self.ref_controller.tower_clicked(tower)
+
     def switch_players(self):
         if self.player1.turn:
             self.player1.turn = False
             self.player2.turn = True
-            if self.mode != 1:
-                self.ref_controller.action(None, None)
+            # if self.mode != 1:
+            #    self.ref_controller.action(None, None)
         else:
             self.player1.turn = True
             self.player2.turn = False
@@ -133,10 +135,11 @@ class Model:
 
         if dist == 1:
             return 1
-        elif dist > 2:
+        elif math.sqrt(math.pow(1, 2) + math.pow(2, 2)) - 0.1 < dist < math.sqrt(math.pow(1, 2) + math.pow(2, 2)) + 0.1:
             return 3
-        return 2
-
+        elif dist < math.sqrt(math.pow(2, 2) + math.pow(2, 2)):
+            return 2
+        return 4
     def check_win(self):
         white = False
         black = False

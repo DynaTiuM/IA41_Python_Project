@@ -12,7 +12,7 @@ class State:
             self.distance = distance
 
         self.adversary_tower = None
-        self.sum = 0
+        self.heuristic = 0
         self.model = model
 
     def add_child(self, child):
@@ -21,15 +21,15 @@ class State:
     def calculate_heuristic(self):
         self.adversary_tower = self.model.determine_tower(self.dx, self.dy)
 
-        self.sum += self.take()
-        self.sum += self.size()
-        self.sum += self.instant_retake()
+        self.heuristic += self.take()
+        self.heuristic += self.size()
+        self.heuristic += self.instant_retake()
         # self.sum += self.end_of_game()
 
-        temp_sum = self.sum
-        self.sum = 0
+        temp_heuristic = self.heuristic
+        self.heuristic = 0
 
-        return temp_sum
+        return temp_heuristic
 
     # [w, b, b, w, b, b]
     # ---> moving 2 :
@@ -77,6 +77,3 @@ class State:
 
     def end_of_game(self):
         pass
-
-    def destroy_children(self):
-        self.children.clear()

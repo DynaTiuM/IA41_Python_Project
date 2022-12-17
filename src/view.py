@@ -8,11 +8,11 @@ from PySide6.QtWidgets import QLabel, QApplication, QMainWindow, QWidget
 
 class View(QMainWindow):
 
+    selected_tower = []
+
     def __init__(self, ref_controller):
 
         self.ref_controller = ref_controller
-
-        self.clicked = False
 
         print("new View!")
 
@@ -60,7 +60,9 @@ class View(QMainWindow):
                 elif i.color == 'black':
                     p.setBrush(QtGui.QColor(30, 15, 0))
                     p.setPen(QPen(Qt.white, 3))
-
+                if t == self.selected_tower and i == self.selected_tower[0]:
+                    p.setBrush(QtGui.QColor(220, 0, 0))
+                    p.setPen(QPen(Qt.white, 3))
                 p.drawEllipse(i.x * int(self.block_size_x) + int(self.block_size_x) * (1 - size) / 2,
                               i.y * int(self.block_size_y) + int(self.block_size_y) * (1 - size) / 2,
                               int(self.block_size_x * size),

@@ -10,13 +10,13 @@ class MinMax:
         self.model = model
 
     def min_max(self, node, depth):
-        self.ia.determine_states(node)
         v = self.max_value(node, depth)
 
         print("MAX : ", self.state, " : ", v)
         return self.state[1]
 
     def max_value(self, node, depth):
+        self.ia.determine_states(node)
         if node.children is None or depth == 0:
             return node.calculate_heuristic()
         v = -10000000
@@ -27,6 +27,7 @@ class MinMax:
         return v
 
     def min_value(self, node, depth):
+        self.ia.determine_states(node)
         if node.children is None or depth == 0:
             return node.calculate_heuristic()
         v = +10000000

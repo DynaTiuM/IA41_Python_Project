@@ -3,16 +3,13 @@ import model
 
 
 class Controller:
-    def __init__(self, mode):
-        self.view = None
-        self.model = None
-        self.mode = mode
-        self.launch()
-        print("launching!")
+    view = view.View
 
-    def launch(self):
+    def __init__(self, mode):
+        self.mode = mode
         self.model = model.Model(self, self.mode)
         self.view = view.View(self)
+        print("launching!")
 
     def get_towers(self):
         return self.model.towers
@@ -31,6 +28,9 @@ class Controller:
             return self.model.player1
         else:
             return self.model.player2
+
+    def tower_clicked(self, tower):
+        self.view.selected_tower = tower
 
     def action(self, x, y):
         if self.mode == 3:
