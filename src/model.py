@@ -28,35 +28,31 @@ class Model:
             self.player2 = ia.IA("black", False, self)
 
         print("New Model!")
+        # Creating the towers of white pawns
+        for i in range(3):
+            for y in range(2):
+                self.pawns.append(pawn.Pawn(0, i, 'white'))
+            self.towers.append(self.pawns)
+            self.pawns = []
 
-        self.pawns.append(pawn.Pawn(0, 0, "white"))
-        self.pawns.append(pawn.Pawn(0, 0, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(0, 1, "white"))
-        self.pawns.append(pawn.Pawn(0, 1, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(0, 2, "black"))
-        self.pawns.append(pawn.Pawn(0, 2, "black"))
-        self.pawns.append(pawn.Pawn(0, 2, "white"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(1, 1, "white"))
-        self.pawns.append(pawn.Pawn(1, 1, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(2, 0, "white"))
-        self.pawns.append(pawn.Pawn(2, 0, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(2, 1, "white"))
-        self.towers.append(self.pawns)
-        self.pawns = []
+        # Creating the towers of black pawns
+        for i in range(3):
+            for y in range(2):
+                self.pawns.append(pawn.Pawn(2, i, 'black'))
+            self.towers.append(self.pawns)
+            self.pawns = []
 
     def __del__(self):
         self.pawns.clear()
         self.towers.clear()
+
+    def force_turn(self, ref_player):
+        if ref_player == self.player1:
+            self.player2.turn = False
+            self.player1.turn = True
+        else:
+            self.player2.turn = True
+            self.player1.turn = False
 
     def get_winner(self):
         if self.winner != "nobody":

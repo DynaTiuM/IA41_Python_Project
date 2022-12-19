@@ -28,7 +28,7 @@ class IA:
                 self.model.decide_type_of_moving(state_.dx, state_.dy,
                                                  state_.distance, self.model.towers)
 
-            # self.model.switch_players()
+            self.model.switch_players()
 
         self.model.check_win()
         return
@@ -37,7 +37,6 @@ class IA:
         num_root = 0
 
         self.determine_all_towers()
-        self.model.switch_players()
         # 0 - 1 - 2
         for amount_moves in range(self.possible_moves):
             distance = amount_moves + 1
@@ -48,7 +47,10 @@ class IA:
                     for y in range(3):
                         if self.model.distance(tower[0].x, tower[0].y, x, y) == distance \
                                 and len(tower) >= distance:
-                            decided_state.add_child(state.State(self.model, tower, x, y,
-                                                                distance, False))
+                            child = state.State(self.model, tower, x, y, distance, False)
+                            decided_state.add_child(child)
+
                             num_root += 1
+
+        print(num_root)
         self.towers_to_examine.clear()

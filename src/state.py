@@ -1,5 +1,7 @@
+
 class State:
     def __init__(self, model, tower, dx, dy, distance, root=False):
+        self.adversary_tower = []
         self.root = root
         self.children = []
         self.tower = tower
@@ -11,7 +13,6 @@ class State:
             self.dy = dy
             self.distance = distance
 
-        self.adversary_tower = None
         self.heuristic = 0
         self.model = model
 
@@ -56,9 +57,26 @@ class State:
 
     def size(self):
         num = 0
+        limit = 3
         for pawn in self.tower:
-            if pawn.color == self.model.get_color():
+            if pawn.color == self.model.get_color() and limit > 0:
                 num += 1
+            limit -= 1
+
+        if limit > 0:
+            if self.adversary_tower:
+                for pawn in self.adversary_tower:
+                    if pawn.color == self.model.get_color() and limit > 0:
+                        num += 1
+                    limit -= 1
+
+        # Imagine [w, b, w] for the current tower,  [b, b] for the enemy's tower
+        # --> limit = 3
+        # --> num = 0
+        # 1st iteration : num = 1   |   limit = 2
+        # 2nd iteration : limit = 1 |
+        # 3rd iteration : num = 2   |   limit = 0
+        # We stop here
 
         return num - 1
 
@@ -66,12 +84,16 @@ class State:
         for tower in self.model.towers:
             distance = self.model.distance(self.x, self.y, tower[0].x, tower[0].y)
             if len(tower) >= distance:
+                # the tower can instantly retake the tower, but with loss
                 if tower[distance - 1].color != self.model.get_color():
                     return 1
+                # the tower can instantly retake the tower
                 elif tower[distance - 1].color == self.model.get_color() and tower[0].x != 1 and tower[0].y != 1:
-                    return 1
+                    return 0
+            # the tower cannot instantly retake the tower, and the tower of the player is at the middle of the game
             elif tower[0].x == 1 and tower[0].y == 1:
                 return 3
+            # the tower cannot instantly retake the tower and the tower of the player is not at the middle
             else:
                 return 2
 
