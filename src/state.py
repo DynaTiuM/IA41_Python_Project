@@ -24,18 +24,15 @@ class State:
         eval_ = 0
         self.eval += self.take()
         eval_ = self.eval
-        print("take = ", eval_)
 
         self.eval += self.move()
-        print("move = ", self.eval - eval_)
         eval_ = self.eval
 
         self.eval += self.instant_retake()
-        print("instant retake = ", self.eval - eval_)
-        print("Distance : ", self.distance)
-        print("EVAL : ", self.eval)
-        print("\n")
+
         # self.sum += self.end_of_game()
+        print("move : ", self.move(), ", distance : ", self.distance, ", coords : ", self.dx, ", ", self.dy)
+        print("eval : ", self.eval)
 
         temp_eval = self.eval
         self.eval = 0

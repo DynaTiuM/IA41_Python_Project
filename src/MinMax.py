@@ -23,6 +23,8 @@ class MinMax:
         v = -10000000
         for child in node.children:
             v = max(v, self.min_value(child, depth - 1))
+            print("max : ", v)
+            print("------------")
             if self.state.eval != v:
                 child.eval = v
                 self.state = child
@@ -35,6 +37,8 @@ class MinMax:
         v = +10000000
         for child in node.children:
             v = min(v, self.max_value(child, depth - 1))
+            print("min : ", v)
+            print("------------")
             if self.state.eval != v:
                 child.eval = v
                 self.state = child
