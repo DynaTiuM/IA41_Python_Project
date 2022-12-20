@@ -136,7 +136,7 @@ class Model:
             return 3
         elif dist < math.sqrt(math.pow(2, 2) + math.pow(2, 2)):
             return 2
-        return 4
+        return -1
 
     def check_win(self):
         white = False

@@ -32,6 +32,7 @@ class State:
 
         self.eval += self.instant_retake()
         print("instant retake = ", self.eval - eval_)
+        print("Distance : ", self.distance)
         print("EVAL : ", self.eval)
         print("\n")
         # self.sum += self.end_of_game()
@@ -98,15 +99,15 @@ class State:
     def instant_retake(self):
         for tower in self.model.towers:
             if tower != self.tower and tower[0].color != self.tower[0].color:
-                distance = self.model.distance(self.x, self.y, tower[0].x, tower[0].y)
-                if len(tower) >= distance:
+                if len(tower) >= self.distance:
                     # the tower can instantly retake the tower, but with loss
                     # [w, w, b, b]
                     # [b, b]
-                    if tower[distance - 1].color != self.model.get_color():
+                    if tower[self.distance - 1].color != self.model.get_color():
                         return 1
                     # the tower can instantly retake the tower
-                    elif tower[distance - 1].color == self.model.get_color() and tower[0].x != 1 and tower[0].y != 1:
+                    elif tower[self.distance - 1].color == self.model.get_color() and tower[0].x != 1 \
+                            and tower[0].y != 1:
                         return -1
                 # the tower cannot instantly retake the tower and the tower of the player is not at the middle
                 else:
