@@ -33,7 +33,7 @@ class IA:
         return
 
     def determine_states(self, decided_state):
-        num_root = 0
+        num_children = 0
 
         self.determine_all_towers()
         # 0 - 1 - 2
@@ -45,12 +45,12 @@ class IA:
                 for x in range(3):
                     for y in range(3):
                         if self.model.distance(tower[0].x, tower[0].y, x, y) == distance \
-                            and tower[0].x != x and tower[0].y != y \
                                 and len(tower) >= distance:
+                            print(tower[0].x, ", ", tower[0].y, " coords : ", x, ", ", y)
                             child = state.State(self.model, tower, x, y, distance, False)
                             decided_state.add_child(child)
 
-                            num_root += 1
+                            num_children += 1
 
-        print(num_root)
+        print("children : ", num_children)
         self.towers_to_examine.clear()
