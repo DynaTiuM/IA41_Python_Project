@@ -10,33 +10,32 @@ class MinMax:
         self.model = model
 
     def min_max(self, node, depth):
-
-        v = self.max_value(node, depth)
-
-        print("MAX : ", self.state, " : ", v)
+        self.max_value(node, depth)
+        print("MAX : ", self.state.eval)
         self.model.force_turn(self.ia)
+
         return self.state
 
     def max_value(self, node, depth):
         self.ia.determine_states(node)
         if node.children is None or depth == 0:
-            return node.calculate_heuristic()
+            return node.evaluation()
         v = -10000000
         for child in node.children:
             v = max(v, self.min_value(child, depth - 1))
-            if self.state.heuristic != v:
-                child.heuristic = v
+            if self.state.eval != v:
+                child.eval = v
                 self.state = child
         return v
 
     def min_value(self, node, depth):
         self.ia.determine_states(node)
         if node.children is None or depth == 0:
-            return node.calculate_heuristic()
+            return node.evaluation()
         v = +10000000
         for child in node.children:
             v = min(v, self.max_value(child, depth - 1))
-            if self.state.heuristic != v:
-                child.heuristic = v
+            if self.state.eval != v:
+                child.eval = v
                 self.state = child
         return v

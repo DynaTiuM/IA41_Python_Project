@@ -1,5 +1,4 @@
 import math
-import MinMax
 import pawn
 import ia
 import player
@@ -68,6 +67,8 @@ class Model:
         for t in self.towers:
             if x == t[0].x and y == t[0].y:
                 return t
+        print("PAS DE TOUR ICI!")
+        return []
 
     def is_winner(self):
         if self.winner is not None:
@@ -136,6 +137,7 @@ class Model:
         elif dist < math.sqrt(math.pow(2, 2) + math.pow(2, 2)):
             return 2
         return 4
+
     def check_win(self):
         white = False
         black = False

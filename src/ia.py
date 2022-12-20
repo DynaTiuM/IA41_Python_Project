@@ -18,12 +18,11 @@ class IA:
                 self.towers_to_examine.append(tower)
 
     def action(self, i, j, towers):
-
         if not self.model.is_winner():
             decided_state = state.State(self.model, [], 0, 0, 0, True)
             minmax = MinMax.MinMax(self, self.model)
-            state_ = minmax.min_max(decided_state, 1)
-            if minmax.state is not None:
+            state_ = minmax.min_max(decided_state, 2)
+            if state_ is not None:
                 self.model.ref = state_.tower
                 self.model.decide_type_of_moving(state_.dx, state_.dy,
                                                  state_.distance, self.model.towers)
