@@ -27,28 +27,10 @@ class Model:
             self.player2 = ia.IA("black", False, self)
 
         print("New Model!")
-        self.pawns.append(pawn.Pawn(0, 0, "white"))
-        self.pawns.append(pawn.Pawn(0, 0, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(0, 1, "white"))
-        self.pawns.append(pawn.Pawn(0, 1, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(0, 2, "black"))
-        self.pawns.append(pawn.Pawn(0, 2, "black"))
-        self.pawns.append(pawn.Pawn(0, 2, "white"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(1, 1, "white"))
-        self.pawns.append(pawn.Pawn(1, 1, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
         self.pawns.append(pawn.Pawn(2, 0, "white"))
-        self.pawns.append(pawn.Pawn(2, 0, "black"))
         self.towers.append(self.pawns)
         self.pawns = []
-        self.pawns.append(pawn.Pawn(2, 1, "white"))
+        self.pawns.append(pawn.Pawn(0, 1, "black"))
         self.towers.append(self.pawns)
         self.pawns = []
 

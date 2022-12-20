@@ -12,6 +12,12 @@ class State:
             self.dx = dx
             self.dy = dy
             self.distance = distance
+        else:
+            self.x = 0
+            self.y = 0
+            self.dx = 0
+            self.dy = 0
+            self.distance = 0
 
         self.eval = 0
         self.model = model

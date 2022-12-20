@@ -46,7 +46,7 @@ class IA:
                     for y in range(3):
                         if self.model.distance(tower[0].x, tower[0].y, x, y) == distance \
                                 and len(tower) >= distance:
-                            print(tower[0].x, ", ", tower[0].y, " coords : ", x, ", ", y)
+                            # print(tower[0].x, ", ", tower[0].y, " coords : ", x, ", ", y)
                             child = state.State(self.model, tower, x, y, distance, False)
                             decided_state.add_child(child)
 
