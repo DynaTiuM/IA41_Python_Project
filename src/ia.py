@@ -20,8 +20,9 @@ class IA:
     def action(self, i, j, towers):
         if not self.model.is_winner():
             decided_state = state.State(self.model, self, [], 0, 0, 0, True)
+            decided_state.set_hierarchy(0)
             minmax = MinMax.MinMax(self, self.model)
-            state_ = minmax.min_max(decided_state, 2)
+            state_ = minmax.min_max(decided_state, 3)
             if state_ is not None:
                 self.model.ref = state_.tower
                 self.model.decide_type_of_moving(state_.dx, state_.dy,
@@ -46,12 +47,12 @@ class IA:
                     for y in range(3):
                         if self.model.distance(tower[0].x, tower[0].y, x, y) == distance \
                                 and len(tower) >= distance:
-
-                                print(tower[0].x, ", ", tower[0].y, " coords : ", x, ", ", y)
-                                child = state.State(self.model, self, tower, x, y, distance, False)
-                                decided_state.add_child(child)
-                                num_children += 1
-                                self.states.append(child)
+                            child = state.State(self.model, self, tower, x, y, distance, False)
+                            decided_state.add_child(child)
+                            child.set_father(decided_state)
+                            child.set_hierarchy(child.father.depth + 1)
+                            num_children += 1
+                            self.states.append(child)
 
         self.towers_to_examine.clear()
 

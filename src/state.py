@@ -1,12 +1,14 @@
 
 class State:
     def __init__(self, model, ia, tower, dx, dy, distance, root=False):
+        self.depth = None
         self.ia = ia
         self.attacker = True
         self.adversary_tower = []
         self.root = root
         self.children = []
         self.tower = tower
+        self.father = None
 
         if not root:
             self.x = tower[0].x
@@ -20,21 +22,23 @@ class State:
 
     def add_child(self, child):
         self.children.append(child)
+        
+    def set_hierarchy(self, depth):
+        self.depth = depth
+
+    def set_father(self, father):
+        self.father = father
 
     def evaluation(self, attacker):
         self.attacker = attacker
         self.adversary_tower = self.ia.determine_tower(self.dx, self.dy)
-        eval_ = 0
+
         self.eval += self.take()
-        eval_ = self.eval
-
         self.eval += self.move()
-        eval_ = self.eval
-
         self.eval += self.instant_retake()
 
         # self.sum += self.end_of_game()
-        print("move : ", self.move(), ", distance : ", self.distance, ", coords : ", self.dx, ", ", self.dy)
+        print("coords : ", self.dx, ", ", self.dy)
         print("eval : ", self.eval)
 
         temp_eval = self.eval
@@ -73,7 +77,7 @@ class State:
             if self.attacker:
                 return -2
             else:
-                return 0
+                return 2
 
     def move(self):
         num = 0
@@ -93,7 +97,7 @@ class State:
                 num += 1
                 if self.attacker:
                     return num
-                return 0
+                return -num
             if new_tower[i+1].color == self.model.get_color() and limit > 0:
                 num += 1
             limit -= 1
@@ -107,7 +111,7 @@ class State:
         # We stop here
         if self.attacker:
             return num
-        return 0
+        return -num
 
     def instant_retake(self):
         for tower in self.model.towers:
@@ -119,15 +123,21 @@ class State:
                     if tower[self.distance - 1].color != self.model.get_color():
                         if self.attacker:
                             return 1
+                        else:
+                            return -1
                     # the tower can instantly retake the tower
                     elif tower[self.distance - 1].color == self.model.get_color() and tower[0].x != 1 \
                             and tower[0].y != 1:
                         if self.attacker:
                             return -1
+                        else:
+                            return 1
                 # the tower cannot instantly retake the tower and the tower of the player is not at the middle
                 else:
                     if self.attacker:
                         return 2
+                    else:
+                        return -2
         return 0
 
     def end_of_game(self):

@@ -37,13 +37,13 @@ class Model:
         self.pawns.clear()
         self.towers.clear()
 
-    def force_turn(self, ref_player):
-        if ref_player == self.player1:
-            self.player2.turn = False
-            self.player1.turn = True
-        else:
+    def force_turn(self, ref_player, forced):
+        if ref_player == self.player1 and forced:
             self.player2.turn = True
             self.player1.turn = False
+        elif not forced:
+            self.player2.turn = False
+            self.player1.turn = True
 
     def get_winner(self):
         if self.winner != "nobody":
@@ -71,9 +71,6 @@ class Model:
     def send_tower_clicked(self, tower):
         self.ref_controller.tower_clicked(tower)
 
-    def secure_move(self, tower, dx, dy, distance):
-        self.ref = tower
-        self.decide_type_of_moving(dx, dy, distance, self.towers, True)
 
     def switch_players(self):
         if self.player1.turn:
