@@ -1,6 +1,8 @@
 
 class State:
-    def __init__(self, model, tower, dx, dy, distance, root=False):
+    def __init__(self, model, ia, tower, dx, dy, distance, root=False):
+        self.ia = ia
+        self.attacker = True
         self.adversary_tower = []
         self.root = root
         self.children = []
@@ -12,12 +14,6 @@ class State:
             self.dx = dx
             self.dy = dy
             self.distance = distance
-        else:
-            self.x = 0
-            self.y = 0
-            self.dx = 0
-            self.dy = 0
-            self.distance = 0
 
         self.eval = 0
         self.model = model
@@ -25,8 +21,9 @@ class State:
     def add_child(self, child):
         self.children.append(child)
 
-    def evaluation(self):
-        self.adversary_tower = self.model.determine_tower(self.dx, self.dy)
+    def evaluation(self, attacker):
+        self.attacker = attacker
+        self.adversary_tower = self.ia.determine_tower(self.dx, self.dy)
         eval_ = 0
         self.eval += self.take()
         eval_ = self.eval
@@ -59,14 +56,24 @@ class State:
         # No loss and gain
         elif self.tower[self.distance - 1].color == self.model.get_color() and self.adversary_tower != [] \
                 and self.tower[0].color != self.adversary_tower[0].color:
-            return 2
+            print("NO loss and GAIN!")
+            if self.attacker:
+                return 2
+            else:
+                return -2
         # Loss and gain
         elif self.tower[self.distance - 1].color != self.model.get_color() and self.adversary_tower != [] \
                 and self.tower[0].color != self.adversary_tower[0].color:
-            return -1
+            if self.attacker:
+                return -1
+            else:
+                return 1
         # Loss and no gain
         else:
-            return -2
+            if self.attacker:
+                return -2
+            else:
+                return 0
 
     def move(self):
         num = 0
@@ -84,7 +91,9 @@ class State:
         for i in range(len(new_tower)):
             if i == len(new_tower) - 1:
                 num += 1
-                return num
+                if self.attacker:
+                    return num
+                return 0
             if new_tower[i+1].color == self.model.get_color() and limit > 0:
                 num += 1
             limit -= 1
@@ -96,8 +105,9 @@ class State:
         # 2nd iteration : limit = 1 |
         # 3rd iteration : num = 2   |   limit = 0
         # We stop here
-
-        return num
+        if self.attacker:
+            return num
+        return 0
 
     def instant_retake(self):
         for tower in self.model.towers:
@@ -107,14 +117,18 @@ class State:
                     # [w, w, b, b]
                     # [b, b]
                     if tower[self.distance - 1].color != self.model.get_color():
-                        return 1
+                        if self.attacker:
+                            return 1
                     # the tower can instantly retake the tower
                     elif tower[self.distance - 1].color == self.model.get_color() and tower[0].x != 1 \
                             and tower[0].y != 1:
-                        return -1
+                        if self.attacker:
+                            return -1
                 # the tower cannot instantly retake the tower and the tower of the player is not at the middle
                 else:
-                    return 2
+                    if self.attacker:
+                        return 2
+        return 0
 
     def end_of_game(self):
         pass

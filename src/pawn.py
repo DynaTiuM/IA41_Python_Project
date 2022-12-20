@@ -7,6 +7,9 @@ class Pawn:
         self.y = y
         self.color = color
 
+    def coords(self):
+        return self.x, self.y
+
     # We can move a pawn into a direction and a number of grids
     def move(self, direction, number):
         if direction == 1:

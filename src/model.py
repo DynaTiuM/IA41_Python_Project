@@ -9,7 +9,6 @@ class Model:
     towers = []
     winner = None
 
-    clicked = False
     ref = None
 
     def __init__(self, ref_controller, mode):
@@ -57,10 +56,11 @@ class Model:
             return self.player2.color
 
     def determine_tower(self, x, y):
+
         for t in self.towers:
             if x == t[0].x and y == t[0].y:
                 return t
-        print("PAS DE TOUR ICI!")
+        print("PAS DE TOUR ICI! : ", x, ", ", y)
         return []
 
     def is_winner(self):
@@ -70,6 +70,10 @@ class Model:
 
     def send_tower_clicked(self, tower):
         self.ref_controller.tower_clicked(tower)
+
+    def secure_move(self, tower, dx, dy, distance):
+        self.ref = tower
+        self.decide_type_of_moving(dx, dy, distance, self.towers, True)
 
     def switch_players(self):
         if self.player1.turn:
@@ -81,16 +85,16 @@ class Model:
             self.player1.turn = True
             self.player2.turn = False
 
-    def decide_type_of_moving(self, x, y, number_of_moving, towers):
+    def decide_type_of_moving(self, x, y, number_of_moving):
         # Searching for if a tower already exists on the new position
-        for tower in towers:
+        for tower in self.towers:
             # If this is the case,
             if x == tower[0].x and y == tower[0].y:
                 self.move_to(number_of_moving, x, y, tower, False)
                 return
 
         # No tower exists, the new position is free
-        self.move_to(number_of_moving, x, y, towers, True)
+        self.move_to(number_of_moving, x, y, self.towers, True)
 
     def move_to(self, amount, x, y, tower, is_free):
         for i in range(amount):
