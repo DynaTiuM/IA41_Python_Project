@@ -38,7 +38,6 @@ class State:
         self.eval += self.instant_retake()
 
         # self.sum += self.end_of_game()
-        print("coords : ", self.dx, ", ", self.dy)
         print("eval : ", self.eval)
 
         temp_eval = self.eval
@@ -77,7 +76,7 @@ class State:
             if self.attacker:
                 return -2
             else:
-                return 2
+                return 0
 
     def move(self):
         num = 0

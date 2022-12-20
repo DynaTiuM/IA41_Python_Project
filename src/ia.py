@@ -22,13 +22,11 @@ class IA:
             decided_state = state.State(self.model, self, [], 0, 0, 0, True)
             decided_state.set_hierarchy(0)
             minmax = MinMax.MinMax(self, self.model)
-            state_ = minmax.min_max(decided_state, 3)
+            state_ = minmax.min_max(decided_state, 2)
             if state_ is not None:
                 self.model.ref = state_.tower
                 self.model.decide_type_of_moving(state_.dx, state_.dy,
                                                  state_.distance)
-
-            self.model.switch_players()
 
         self.model.check_win()
         return
@@ -53,7 +51,7 @@ class IA:
                             child.set_hierarchy(child.father.depth + 1)
                             num_children += 1
                             self.states.append(child)
-
+        print(num_children)
         self.towers_to_examine.clear()
 
     def determine_tower(self, dx, dy):

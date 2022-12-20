@@ -26,12 +26,20 @@ class Model:
             self.player2 = ia.IA("black", False, self)
 
         print("New Model!")
-        self.pawns.append(pawn.Pawn(2, 0, "white"))
-        self.towers.append(self.pawns)
-        self.pawns = []
-        self.pawns.append(pawn.Pawn(0, 1, "black"))
-        self.towers.append(self.pawns)
-        self.pawns = []
+        # Creating the towers of white pawns
+        for i in range(3):
+            for y in range(2):
+                self.pawns.append(pawn.Pawn(0, i, 'white'))
+            self.towers.append(self.pawns)
+            self.pawns = []
+
+        # Creating the towers of black pawns
+        for i in range(3):
+            for y in range(2):
+                self.pawns.append(pawn.Pawn(2, i, 'black'))
+            self.towers.append(self.pawns)
+            self.pawns = []
+
 
     def __del__(self):
         self.pawns.clear()
@@ -60,7 +68,6 @@ class Model:
         for t in self.towers:
             if x == t[0].x and y == t[0].y:
                 return t
-        print("PAS DE TOUR ICI! : ", x, ", ", y)
         return []
 
     def is_winner(self):
