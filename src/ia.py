@@ -53,7 +53,7 @@ class IA:
         # We only work with the towers that the IA is able to move
         # i.e. the towers with the color black on the pawn at the first position of the tower
         for tower in self.towers_to_examine:
-            print("TOWER'S POSITION : ", tower, "COLOR OF THE PLAYER :", tower[0].color)
+            print("TOWER'S POSITION : ", tower[0].x, tower[0].y, "COLOR OF THE PLAYER :", tower[0].color)
             # We travel all the game bord to see if the tower is able to move at that point
             for x in range(3):
                 for y in range(3):
@@ -84,6 +84,8 @@ class IA:
 
                         # We change the position
                         child.determine_new_tower()
+
+                        child.previous_move_information()
 
                         self.model.towers = decided_state_copy.towers
                         for t in child.towers:

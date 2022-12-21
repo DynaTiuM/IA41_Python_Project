@@ -12,8 +12,9 @@ class MinMax:
 
     def min_max(self, node, depth):
         self.depth = depth
+        self.model.switch_players()
         v = self.max_value(node, depth)
-        self.model.force_turn(self.ia, True)
+        self.model.force_turn(self.ia, False)
 
         print("MAX : ", v[0])
 
@@ -26,13 +27,13 @@ class MinMax:
                 return s
 
     def max_value(self, node, depth):       # depth = 2
-        self.model.force_turn(self.ia, True)
-        print("MAX CALLLLLLLLLLEDDDDDDDDDDDDDDDDDD")
+        self.model.switch_players()
+        print("MAX CALLLLLLLLLLEDDDDDDDDDDDDDDDDDD", depth)
         if depth != 0:
             self.ia.determine_states(node)      # we determine the  3 children of the node
         if node.children == [] or depth == 0:
             print("==============")
-            print(node.tower[0].color, "PLAYING", depth)  # Black turn
+            # print(node.tower[0].color, "PLAYING", depth)  # Black turn
             print("==============")
             print("- max EVAL : ", node.evaluation(False))
             return [node.evaluation(False), node]
@@ -62,15 +63,14 @@ class MinMax:
         return return_state
 
     def min_value(self, node, depth):
-        self.model.force_turn(self.ia, False)
-
-        print("MIN CALLLLLLLLLLEDDDDDDDDDDDDDDDDDD")
+        self.model.switch_players()
+        print("MIN CALLLLLLLLLLEDDDDDDDDDDDDDDDDDD", depth)
         if depth != 0:
             self.ia.determine_states(node)
 
         if node.children == [] or depth == 0:
             print("==============")
-            print(node.tower[0].color, "PLAYING", depth)  # White turn
+            # print(node.tower[0].color, "PLAYING", depth)  # White turn
             print("==============")
             print("- min EVAL : ", node.evaluation(True))
             return [node.evaluation(True), node]

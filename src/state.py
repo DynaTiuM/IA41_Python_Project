@@ -1,5 +1,7 @@
 class State:
     def __init__(self, model, ia, dx, dy, distance, root=False):
+        self.previous_towers = None
+        self.previous_tower = None
         self.depth = None
         self.towers = []
         self.tower = []
@@ -24,6 +26,17 @@ class State:
     def set_hierarchy(self, depth):
         self.depth = depth
 
+    def previous_move_information(self):
+        print("\n")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("PREVIOUS TOWERS :")
+        for t in self.father.towers:
+            print(t[0].x, t[0].y)
+        if self.father.tower:
+            print("FATHER TOWER : ", self.father.tower[0].x, self.father.tower[0].y)
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("\n")
+
     def determine_new_tower(self):
         for t in self.towers:
             if t[0].x == self.dx and t[0].y == self.dy:
@@ -34,7 +47,7 @@ class State:
 
     def evaluation(self, attacker):
         self.attacker = attacker
-        self.adversary_tower = self.model.determine_tower(self.dx, self.dy, self.towers)
+        self.adversary_tower = self.model.determine_tower(self.tower[0].x, self.tower[0].y, self.father.towers)
 
         self.eval += self.take()
         # self.eval += self.move()
@@ -42,6 +55,10 @@ class State:
 
         # self.sum += self.end_of_game()
         print("eval : ", self.eval)
+        for t in self.tower:
+            print(t.color)
+        print("POSITION OF THE PAWN :", self.tower[0].x, self.tower[0].y, "| COLOR : ",
+              self.tower[0].color, "| HIERARCHY :", self.depth)
 
         temp_eval = self.eval
         self.eval = 0
@@ -57,29 +74,32 @@ class State:
     # Moving with no loss !
     def take(self):
         # No loss and no gain
-        if self.distance > len(self.tower) and self.adversary_tower == []:
+        if self.father.distance == len(self.father.tower) and self.adversary_tower == []:
+            print(" NO loss and NO gain!")
             return 0
         # No loss and gain
-        elif self.tower[self.distance - 1].color == self.model.get_color() and self.adversary_tower != [] \
-                and self.tower[0].color != self.adversary_tower[0].color:
+        elif self.father.tower[self.father.distance - 1].color == self.model.get_color() and self.adversary_tower != [] \
+                and self.father.tower[0].color == self.adversary_tower[0].color:
             print("NO loss and GAIN!")
             if self.attacker:
                 return 2
             else:
                 return -2
         # Loss and gain
-        elif self.tower[self.distance - 1].color != self.model.get_color() and self.adversary_tower != [] \
-                and self.tower[0].color != self.adversary_tower[0].color:
+        elif self.father.tower[self.father.distance - 1].color != self.model.get_color() and self.adversary_tower != [] \
+                and self.father.tower[0].color != self.adversary_tower[0].color:
+            print("LOSS and GAIN!!")
             if self.attacker:
                 return -1
             else:
                 return 1
         # Loss and no gain
         else:
+            print("LOSS and NO gain!")
             if self.attacker:
                 return -2
             else:
-                return 0
+                return -2
 
     def move(self):
         num = 0
