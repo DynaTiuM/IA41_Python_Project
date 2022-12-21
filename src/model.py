@@ -42,7 +42,7 @@ class Model:
         self.towers.clear()
 
     def force_turn(self, ref_player, forced):
-        if ref_player == self.player1 and forced:
+        if ref_player == self.player2 and forced:
             self.player2.turn = True
             self.player1.turn = False
         elif not forced:
@@ -94,13 +94,19 @@ class Model:
         return self.move_to(number_of_moving, x, y, [], towers, True, player_)
 
     def move_to(self, amount, x, y, tower, towers, is_free, player_):
-
         if not player_:
             tower = deepcopy(tower)
             towers = deepcopy(towers)
             for t in towers:
                 if self.ref[0].x == t[0].x and self.ref[0].y == t[0].y:
                     self.ref = t
+        '''
+        print("FIRST ~~~~~~~~~~~~~~~~~~~~~~")
+        for t in towers:
+            for p in t:
+                print(p.color)
+        print(towers)
+        '''
 
         for i in range(amount):
             # New position of the pawns
@@ -114,9 +120,14 @@ class Model:
 
         if not is_free:
             self.pawns += tower
-            tower.clear()
+            for t in towers:
+                for p in t:
+                    if p.x == tower[0].x and p.y == tower[0].y:
+                        towers.remove(t)
+
             for p in self.pawns:
                 tower.append(p)
+            towers.append(self.pawns)
 
         # if self.ref is NULL
         if not self.ref:
@@ -127,6 +138,13 @@ class Model:
             towers.append(self.pawns)
         self.pawns = []
         self.ref = None
+        '''
+        print("LAST ~~~~~~~~~~~~~~~~~~~~~~")
+        for t in towers:
+            for p in t:
+                print(p.color)
+        print(towers)
+        '''
 
         return towers
 

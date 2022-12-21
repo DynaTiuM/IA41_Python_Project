@@ -26,11 +26,14 @@ class IA:
             decided_state.set_hierarchy(0)
             minmax = MinMax.MinMax(self, self.model)
             state_ = minmax.min_max(decided_state, 2)
-            if state_ is not None:
-                self.model.ref = state_.tower
-                self.model.decide_type_of_moving(state_.dx, state_.dy,
-                                                 state_.distance, state_.towers, False)
 
+            if state_ is not None:
+                print(" STATE : ", state_.tower[0].x, ", ", state_.tower[0].y)
+                for t in state_.towers:
+                    print(t[0].x, t[0].y)
+                self.model.ref = state_.tower
+                self.model.towers = state_.towers
+                self.model.switch_players()
         self.model.check_win()
         return
 
@@ -42,7 +45,8 @@ class IA:
         # At the beginning, the tage is the bord configuration just after the player played
         self.determine_all_towers(decided_state_copy.towers)
 
-        print(decided_state_copy.towers)
+        for t in decided_state_copy.towers:
+            print("ALL TOWERS IN GAME : ", t[0].x, t[0].y)
         # We print every tower position that we can MOVE
         print("--------------")
         print("towers :")
@@ -53,7 +57,7 @@ class IA:
         # We only work with the towers that the IA is able to move
         # i.e. the towers with the color black on the pawn at the first position of the tower
         for tower in self.towers_to_examine:
-            print("TOWER'S POSITION : ", tower[0].x, tower[0].y, "COLOR OF THE PLAYER :", tower[0].color)
+            print("TOWER'S POSITION : ", tower[0].x, tower[0].y, "| COLOR OF THE PLAYER :", tower[0].color)
             # We travel all the game bord to see if the tower is able to move at that point
             for x in range(3):
                 for y in range(3):
@@ -69,7 +73,7 @@ class IA:
 
                         # We print the tower's position and its derivative values
                         print("Tower's position : ", ref_tower[0].x, ref_tower[0].y, " | derivated in dx and dy :",
-                              x, y, " | distance :", distance)
+                              x, y, " | distance :", distance, "| COLOR : ", ref_tower[0].color)
 
                         # We add a child to this state
                         child = state.State(self.model, self, x, y, distance, False)
@@ -85,11 +89,12 @@ class IA:
                         # We change the position
                         child.determine_new_tower()
 
-                        child.previous_move_information()
+                        # child.previous_move_information()
 
                         self.model.towers = decided_state_copy.towers
-                        for t in child.towers:
-                            print("child TOWERS:", t[0].x, t[0].y)
+                        # for t in child.towers:
+                        #    print("child TOWERS:", t[0].x, t[0].y)
+
                         # self.states.append(child)
 
                         num_children += 1

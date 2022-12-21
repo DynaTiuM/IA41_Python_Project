@@ -54,12 +54,10 @@ class State:
         # self.eval += self.instant_retake()
 
         # self.sum += self.end_of_game()
-        print("eval : ", self.eval)
-        for t in self.tower:
-            print(t.color)
         print("POSITION OF THE PAWN :", self.tower[0].x, self.tower[0].y, "| COLOR : ",
               self.tower[0].color, "| HIERARCHY :", self.depth)
 
+        print("eval : ", self.eval)
         temp_eval = self.eval
         self.eval = 0
 
@@ -75,7 +73,7 @@ class State:
     def take(self):
         # No loss and no gain
         if self.father.distance == len(self.father.tower) and self.adversary_tower == []:
-            print(" NO loss and NO gain!")
+            print("NO loss and NO gain!")
             return 0
         # No loss and gain
         elif self.father.tower[self.father.distance - 1].color == self.model.get_color() and self.adversary_tower != [] \
