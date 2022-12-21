@@ -1,18 +1,16 @@
-
 class State:
-    def __init__(self, model, ia, tower, dx, dy, distance, root=False):
+    def __init__(self, model, ia, dx, dy, distance, root=False):
         self.depth = None
+        self.towers = []
+        self.tower = []
         self.ia = ia
         self.attacker = True
         self.adversary_tower = []
         self.root = root
         self.children = []
-        self.tower = tower
         self.father = None
-
+        self.x = self.y = None
         if not root:
-            self.x = tower[0].x
-            self.y = tower[0].y
             self.dx = dx
             self.dy = dy
             self.distance = distance
@@ -22,20 +20,25 @@ class State:
 
     def add_child(self, child):
         self.children.append(child)
-        
+
     def set_hierarchy(self, depth):
         self.depth = depth
+
+    def determine_new_tower(self):
+        for t in self.towers:
+            if t[0].x == self.dx and t[0].y == self.dy:
+                self.tower = t
 
     def set_father(self, father):
         self.father = father
 
     def evaluation(self, attacker):
         self.attacker = attacker
-        self.adversary_tower = self.ia.determine_tower(self.dx, self.dy)
+        self.adversary_tower = self.model.determine_tower(self.dx, self.dy, self.towers)
 
         self.eval += self.take()
-        self.eval += self.move()
-        self.eval += self.instant_retake()
+        # self.eval += self.move()
+        # self.eval += self.instant_retake()
 
         # self.sum += self.end_of_game()
         print("eval : ", self.eval)
@@ -97,7 +100,7 @@ class State:
                 if self.attacker:
                     return num
                 return -num
-            if new_tower[i+1].color == self.model.get_color() and limit > 0:
+            if new_tower[i + 1].color == self.model.get_color() and limit > 0:
                 num += 1
             limit -= 1
 

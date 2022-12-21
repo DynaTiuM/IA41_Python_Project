@@ -1,4 +1,6 @@
 import math
+from copy import copy, deepcopy
+
 import pawn
 import ia
 import player
@@ -12,6 +14,7 @@ class Model:
     ref = None
 
     def __init__(self, ref_controller, mode):
+        self.saved_towers = None
         self.ref_controller = ref_controller
         self.mode = mode
 
@@ -26,19 +29,12 @@ class Model:
             self.player2 = ia.IA("black", False, self)
 
         print("New Model!")
-        # Creating the towers of white pawns
-        for i in range(3):
-            for y in range(2):
-                self.pawns.append(pawn.Pawn(0, i, 'white'))
-            self.towers.append(self.pawns)
-            self.pawns = []
-
-        # Creating the towers of black pawns
-        for i in range(3):
-            for y in range(2):
-                self.pawns.append(pawn.Pawn(2, i, 'black'))
-            self.towers.append(self.pawns)
-            self.pawns = []
+        self.pawns.append(pawn.Pawn(2, 0, "white"))
+        self.towers.append(self.pawns)
+        self.pawns = []
+        self.pawns.append(pawn.Pawn(0, 1, "black"))
+        self.towers.append(self.pawns)
+        self.pawns = []
 
 
     def __del__(self):
@@ -63,9 +59,8 @@ class Model:
         else:
             return self.player2.color
 
-    def determine_tower(self, x, y):
-
-        for t in self.towers:
+    def determine_tower(self, x, y, towers):
+        for t in towers:
             if x == t[0].x and y == t[0].y:
                 return t
         return []
@@ -78,7 +73,6 @@ class Model:
     def send_tower_clicked(self, tower):
         self.ref_controller.tower_clicked(tower)
 
-
     def switch_players(self):
         if self.player1.turn:
             self.player1.turn = False
@@ -89,22 +83,30 @@ class Model:
             self.player1.turn = True
             self.player2.turn = False
 
-    def decide_type_of_moving(self, x, y, number_of_moving):
+    def decide_type_of_moving(self, x, y, number_of_moving, towers, player_):
         # Searching for if a tower already exists on the new position
-        for tower in self.towers:
+        for destination_tower in towers:
             # If this is the case,
-            if x == tower[0].x and y == tower[0].y:
-                self.move_to(number_of_moving, x, y, tower, False)
-                return
+            if x == destination_tower[0].x and y == destination_tower[0].y:
+                return self.move_to(number_of_moving, x, y, destination_tower, towers, False, player_)
 
         # No tower exists, the new position is free
-        self.move_to(number_of_moving, x, y, self.towers, True)
+        return self.move_to(number_of_moving, x, y, [], towers, True, player_)
 
-    def move_to(self, amount, x, y, tower, is_free):
+    def move_to(self, amount, x, y, tower, towers, is_free, player_):
+
+        if not player_:
+            tower = deepcopy(tower)
+            towers = deepcopy(towers)
+            for t in towers:
+                if self.ref[0].x == t[0].x and self.ref[0].y == t[0].y:
+                    self.ref = t
+
         for i in range(amount):
             # New position of the pawns
             self.ref[0].x = x
             self.ref[0].y = y
+
             # We add to pawns list the pawns that we move
             self.pawns.append(self.ref[0])
             # We remove the pawn from the latest location
@@ -119,14 +121,14 @@ class Model:
         # if self.ref is NULL
         if not self.ref:
             # We remove it from the towers list
-            self.towers.remove(self.ref)
+            towers.remove(self.ref)
 
         if is_free:
-            self.towers.append(self.pawns)
+            towers.append(self.pawns)
         self.pawns = []
         self.ref = None
 
-        return
+        return towers
 
     def distance(self, x, y, dx, dy):
         dist = math.sqrt(math.pow((dx - x), 2) + math.pow((dy - y), 2))

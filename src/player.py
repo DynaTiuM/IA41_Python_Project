@@ -31,7 +31,7 @@ class Player:
                 if len(self.model.ref) >= number_of_moving:
                     self.clicked = False
                     self.model.send_tower_clicked([])
-                    self.model.decide_type_of_moving(x, y, number_of_moving)
+                    self.model.towers = self.model.decide_type_of_moving(x, y, number_of_moving, self.model.towers, True)
 
                 self.model.switch_players()
             # The player wants to change his pawn to move:

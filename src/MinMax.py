@@ -6,7 +6,7 @@ class MinMax:
     def __init__(self, ia, model):
         self.depth = None
         self.tab = [0, None]
-        self.state = state.State(model, ia, [], 0, 0, 0, True)
+        # self.state = state.State(model, ia, [], 0, 0, 0, True)
         self.ia = ia
         self.model = model
 
@@ -26,10 +26,8 @@ class MinMax:
                 return s
 
     def max_value(self, node, depth):       # depth = 2
-        if self.depth == depth:
-            self.model.force_turn(self.ia, True)    # AI's turn
-        else:
-            self.model.force_turn(self.ia, False)
+        self.model.force_turn(self.ia, True)
+        print("MAX CALLLLLLLLLLEDDDDDDDDDDDDDDDDDD")
         if depth != 0:
             self.ia.determine_states(node)      # we determine the  3 children of the node
         if node.children == [] or depth == 0:
@@ -64,9 +62,9 @@ class MinMax:
         return return_state
 
     def min_value(self, node, depth):
+        self.model.force_turn(self.ia, False)
 
-        self.model.force_turn(self.ia, True)
-
+        print("MIN CALLLLLLLLLLEDDDDDDDDDDDDDDDDDD")
         if depth != 0:
             self.ia.determine_states(node)
 
@@ -74,7 +72,7 @@ class MinMax:
             print("==============")
             print(node.tower[0].color, "PLAYING", depth)  # White turn
             print("==============")
-            print("- min EVAL : ", node.evaluation(False))
+            print("- min EVAL : ", node.evaluation(True))
             return [node.evaluation(True), node]
         return_state = [+10000000, None]
         for child in node.children:
