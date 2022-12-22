@@ -65,12 +65,12 @@ class IA:
 
                     # We calculate the distance between this tower and its derivation
                     distance = self.model.distance(ref_tower[0].x, ref_tower[0].y, dx, dy)
-                    print("Distance : ", distance)
+
                     # If this tower has enough pawns, we add a son
                     if len(ref_tower) >= distance != - 1:
                         # We print the tower's position and its derivative values
-                        # print("Tower's position : ", ref_tower[0].x, ref_tower[0].y, " | derivated in dx and dy :",
-                        # x, y, " | distance :", distance, "| COLOR : ", ref_tower[0].color)
+                        print("Tower's position : ", ref_tower[0].x, ref_tower[0].y, " | derivated in dx and dy :",
+                              dx, dy, " | distance :", distance, "| COLOR : ", ref_tower[0].color)
 
                         # We add a child to this state
                         child = state.State(self.model, self, dx, dy, distance, False)
@@ -88,10 +88,8 @@ class IA:
                         # We change the position
                         child.determine_new_tower()
 
-                        # self.model.towers = decided_state_copy.towers
-                        print("NUMBER OF TOWERS : ", child.tower[0].x, child.tower[0].y)
-                        child.print_towers()
-
+                        # print("NUMBER OF TOWERS : ", child.tower[0].x, child.tower[0].y)
+                        # child.print_towers()
 
                         num_children += 1
         print("Number of children :", num_children)

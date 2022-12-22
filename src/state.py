@@ -1,11 +1,7 @@
 class State:
     def __init__(self, model, ia, dx, dy, distance, root=False):
-        self.prev_x = None
-        self.prev_y = None
-        self.previous_towers = None
-        self.previous_tower = None
-        self.distance = None
-        self.depth = None
+        self.prev_tower = self.prev_x = self.prev_y = self.previous_towers = self.previous_tower = self.distance = None
+        self.depth = self.father = None
         self.towers = []
         self.tower = []
         self.ia = ia
@@ -13,8 +9,6 @@ class State:
         self.adversary_tower = []
         self.root = root
         self.children = []
-        self.father = None
-        self.x = self.y = None
         if not root:
             self.dx = dx
             self.dy = dy
@@ -60,35 +54,23 @@ class State:
 
     def evaluation(self, attacker):
         self.attacker = attacker
-        # self.adversary_tower = self.model.determine_tower(self.dx, self.dy, self.towers)
+
+        self.eval += self.end_of_game()
 
         if self.father.distance is not None:
-            # self.eval += self.take()
-            # move = self.move()
-            instant_retake = self.instant_retake()
-            # print("MOVE : ", move)
-            # print("INSTANT RETAKE : ", instant_retake)
-            # self.eval += move
-            self.eval += instant_retake
+
+            self.eval += self.instant_retake()
             self.eval += self.take()
 
-            # self.eval += self.end_of_game()
             print("POSITION OF THE PAWN :", self.tower[0].x, self.tower[0].y, "| COLOR : ",
                   self.tower[0].color, "| HIERARCHY :", self.depth)
 
             print("EVAL : ", self.eval)
-            temp_eval = self.eval
-            self.eval = 0
 
-            return temp_eval
+        temp_eval = self.eval
+        self.eval = 0
 
-        # NOT WORKING
-        else:
-            if self.attacker:
-                self.eval = -999
-            else:
-                self.eval = 999
-        return self.eval
+        return temp_eval
 
     # [w, b, b, w, b, b]
     # ---> moving 2 :
@@ -232,4 +214,17 @@ class State:
         return 0
 
     def end_of_game(self):
-        pass
+        win = True
+        for t in self.towers:
+            if t[0].color != self.tower[0].color:
+                win = False
+
+        if not win:
+            return 0
+        elif win:
+            if self.attacker:
+                print("WIN!")
+                return 999
+            else:
+                print("LOOSE!")
+                return -999

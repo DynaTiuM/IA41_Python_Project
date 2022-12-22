@@ -45,7 +45,6 @@ class Model:
             self.towers.append(self.pawns)
             self.pawns = []
 
-
     def __del__(self):
         self.pawns.clear()
         self.towers.clear()

@@ -11,8 +11,8 @@ class MinMax:
         v = self.max_value(node, depth)
         self.model.force_turn(self.ia, True)
 
-        # print("MAX : ", v[0], "| STATE ASSOCIATED : ", v[1].father.tower[0].x, ", ", v[1].father.tower[0].y)
-        while depth != 1:
+        print("MAX : ", v[0], "| STATE ASSOCIATED : ", v[1].father.tower[0].x, ", ", v[1].father.tower[0].y)
+        while v[1].depth != 1:
             v[1] = v[1].father
             depth -= 1
         return v[1]
