@@ -48,6 +48,7 @@ class View(QMainWindow):
 
         towers = self.ref_controller.get_towers()
         winner = self.ref_controller.get_winner()
+
         for t in towers:
             size = 0.9
 

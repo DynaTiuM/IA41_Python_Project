@@ -7,6 +7,7 @@ import MinMax
 class IA:
     possible_moves = 3
     states = []
+    turn = False
 
     def __init__(self, color, turn, model):
         self.towers_to_examine = []
@@ -25,7 +26,7 @@ class IA:
             decided_state.towers = self.model.towers
             decided_state.set_hierarchy(0)
             minmax = MinMax.MinMax(self, self.model)
-            state_ = minmax.min_max(decided_state, 3)
+            state_ = minmax.min_max(decided_state, 2)
 
             if state_ is not None:
                 self.model.towers = state_.towers
@@ -56,14 +57,14 @@ class IA:
         for tower in self.towers_to_examine:
             print("TOWER'S POSITION : ", tower[0].x, tower[0].y, "| COLOR OF THE PLAYER :", tower[0].color)
             # We travel all the game bord to see if the tower is able to move at that point
-            for x in range(3):
-                for y in range(3):
+            for dx in range(3):
+                for dy in range(3):
 
                     # We copy the original position of the tower
                     ref_tower = deepcopy(tower)
 
                     # We calculate the distance between this tower and its derivation
-                    distance = self.model.distance(ref_tower[0].x, ref_tower[0].y, x, y)
+                    distance = self.model.distance(ref_tower[0].x, ref_tower[0].y, dx, dy)
                     print("Distance : ", distance)
                     # If this tower has enough pawns, we add a son
                     if len(ref_tower) >= distance != - 1:
@@ -72,15 +73,16 @@ class IA:
                         # x, y, " | distance :", distance, "| COLOR : ", ref_tower[0].color)
 
                         # We add a child to this state
-                        child = state.State(self.model, self, x, y, distance, False)
+                        child = state.State(self.model, self, dx, dy, distance, False)
                         decided_state.add_child(child)
+                        child.set_prev_tower(tower)
                         child.set_father(decided_state)
                         child.set_hierarchy(child.father.depth + 1)
 
                         # We move this tower to its derivative position
 
                         self.model.ref = ref_tower
-                        child.towers = self.model.decide_type_of_moving(x, y, distance, decided_state_copy.towers,
+                        child.towers = self.model.decide_type_of_moving(dx, dy, distance, decided_state_copy.towers,
                                                                         False)
 
                         # We change the position

@@ -4,6 +4,9 @@ import model
 
 class Controller:
     view = view.View
+    model = model.Model
+
+    ia_vs_ia = False
 
     def __init__(self, mode):
         self.mode = mode
@@ -33,9 +36,12 @@ class Controller:
         self.view.selected_tower = tower
 
     def action(self, x, y):
-        if self.mode == 3:
-            return
+
         print("new Action!")
         towers = self.get_towers()
 
         self.get_turn().action(x, y, towers)
+
+    def launch_ia_vs_ia(self):
+        self.model.ia_vs_ia()
+        self.ia_vs_ia = True

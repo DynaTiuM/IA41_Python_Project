@@ -4,17 +4,14 @@ import state
 class MinMax:
 
     def __init__(self, ia, model):
-        self.depth = None
-        self.tab = [0, None]
         self.ia = ia
         self.model = model
 
     def min_max(self, node, depth):
-        self.depth = depth
         v = self.max_value(node, depth)
         self.model.force_turn(self.ia, True)
 
-        print("MAX : ", v[0], "| STATE ASSOCIATED : ", v[1].father.tower[0].x, ", ", v[1].father.tower[0].y)
+        # print("MAX : ", v[0], "| STATE ASSOCIATED : ", v[1].father.tower[0].x, ", ", v[1].father.tower[0].y)
         while depth != 1:
             v[1] = v[1].father
             depth -= 1
@@ -27,10 +24,7 @@ class MinMax:
                 return s
 
     def max_value(self, node, depth):       # depth = 2
-        if self.depth == depth:
-            self.model.force_turn(self.ia, True)
-        else:
-            self.model.force_turn(self.ia, True)
+        self.model.force_turn(self.ia, True)
 
         print("----------- MAX CALLED -----------", depth)
         # print("AI'S TURN : ", self.model.player2.turn)

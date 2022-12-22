@@ -10,6 +10,8 @@ class Model:
     pawns = []
     towers = []
     winner = None
+    player1 = ia.IA
+    player2 = ia.IA
 
     ref = None
 
@@ -31,19 +33,26 @@ class Model:
         print("New Model!")
         # Creating the towers of white pawns
         for i in range(3):
-            self.pawns.append(pawn.Pawn(0, i, 'white'))
+            for y in range(2):
+                self.pawns.append(pawn.Pawn(0, i, 'white'))
             self.towers.append(self.pawns)
             self.pawns = []
 
         # Creating the towers of black pawns
         for i in range(3):
-            self.pawns.append(pawn.Pawn(2, i, 'black'))
+            for y in range(2):
+                self.pawns.append(pawn.Pawn(2, i, 'black'))
             self.towers.append(self.pawns)
             self.pawns = []
+
 
     def __del__(self):
         self.pawns.clear()
         self.towers.clear()
+
+    def ia_vs_ia(self):
+        if self.winner is None:
+            self.ref_controller.action(None, None)
 
     def force_turn(self, ref_player, forced):
         if ref_player == self.player2 and forced:
@@ -104,13 +113,6 @@ class Model:
             for t in towers:
                 if self.ref[0].x == t[0].x and self.ref[0].y == t[0].y:
                     self.ref = t
-        '''
-        print("FIRST ~~~~~~~~~~~~~~~~~~~~~~")
-        for t in towers:
-            for p in t:
-                print(p.color)
-        print(towers)
-        '''
 
         for i in range(amount):
             # New position of the pawns
@@ -143,13 +145,6 @@ class Model:
             towers.append(self.pawns)
         self.pawns = []
         self.ref = None
-        '''
-        print("LAST ~~~~~~~~~~~~~~~~~~~~~~")
-        for t in towers:
-            for p in t:
-                print(p.color)
-        print(towers)
-        '''
 
         return towers
 
