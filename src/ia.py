@@ -25,15 +25,12 @@ class IA:
             decided_state.towers = self.model.towers
             decided_state.set_hierarchy(0)
             minmax = MinMax.MinMax(self, self.model)
-            state_ = minmax.min_max(decided_state, 2)
+            state_ = minmax.min_max(decided_state, 3)
 
             if state_ is not None:
-                # print(" STATE : ", state_.tower[0].x, ", ", state_.tower[0].y)
-                for t in state_.towers:
-                    print(t[0].x, t[0].y)
-                self.model.ref = state_.tower
                 self.model.towers = state_.towers
                 self.model.switch_players()
+
         self.model.check_win()
         return
 
@@ -67,13 +64,12 @@ class IA:
 
                     # We calculate the distance between this tower and its derivation
                     distance = self.model.distance(ref_tower[0].x, ref_tower[0].y, x, y)
-
+                    print("Distance : ", distance)
                     # If this tower has enough pawns, we add a son
                     if len(ref_tower) >= distance != - 1:
-
                         # We print the tower's position and its derivative values
-                        print("Tower's position : ", ref_tower[0].x, ref_tower[0].y, " | derivated in dx and dy :",
-                              x, y, " | distance :", distance, "| COLOR : ", ref_tower[0].color)
+                        # print("Tower's position : ", ref_tower[0].x, ref_tower[0].y, " | derivated in dx and dy :",
+                        # x, y, " | distance :", distance, "| COLOR : ", ref_tower[0].color)
 
                         # We add a child to this state
                         child = state.State(self.model, self, x, y, distance, False)
@@ -84,18 +80,16 @@ class IA:
                         # We move this tower to its derivative position
 
                         self.model.ref = ref_tower
-                        child.towers = self.model.decide_type_of_moving(x, y, distance, decided_state_copy.towers, False)
+                        child.towers = self.model.decide_type_of_moving(x, y, distance, decided_state_copy.towers,
+                                                                        False)
 
                         # We change the position
                         child.determine_new_tower()
 
-                        # child.previous_move_information()
+                        # self.model.towers = decided_state_copy.towers
+                        print("NUMBER OF TOWERS : ", child.tower[0].x, child.tower[0].y)
+                        child.print_towers()
 
-                        self.model.towers = decided_state_copy.towers
-                        # for t in child.towers:
-                        #    print("child TOWERS:", t[0].x, t[0].y)
-
-                        # self.states.append(child)
 
                         num_children += 1
         print("Number of children :", num_children)

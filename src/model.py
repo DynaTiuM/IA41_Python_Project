@@ -31,15 +31,13 @@ class Model:
         print("New Model!")
         # Creating the towers of white pawns
         for i in range(3):
-            for y in range(2):
-                self.pawns.append(pawn.Pawn(0, i, 'white'))
+            self.pawns.append(pawn.Pawn(0, i, 'white'))
             self.towers.append(self.pawns)
             self.pawns = []
 
         # Creating the towers of black pawns
         for i in range(3):
-            for y in range(2):
-                self.pawns.append(pawn.Pawn(2, i, 'black'))
+            self.pawns.append(pawn.Pawn(2, i, 'black'))
             self.towers.append(self.pawns)
             self.pawns = []
 
@@ -157,7 +155,8 @@ class Model:
 
     def distance(self, x, y, dx, dy):
         dist = math.sqrt(math.pow((dx - x), 2) + math.pow((dy - y), 2))
-
+        if x == dx and y == dy:
+            return -1
         if dist == 1:
             return 1
         elif math.sqrt(math.pow(1, 2) + math.pow(2, 2)) - 0.1 < dist < math.sqrt(math.pow(1, 2) + math.pow(2, 2)) + 0.1:

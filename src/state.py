@@ -38,6 +38,13 @@ class State:
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("\n")
 
+    def print_towers(self):
+        pawns = 0
+        for t in self.towers:
+            for p in t:
+                pawns += 1
+        print(pawns)
+
     def determine_new_tower(self):
         for t in self.towers:
             if t[0].x == self.dx and t[0].y == self.dy:
@@ -48,7 +55,7 @@ class State:
 
     def evaluation(self, attacker):
         self.attacker = attacker
-        self.adversary_tower = self.model.determine_tower(self.tower[0].x, self.tower[0].y, self.father.towers)
+        # self.adversary_tower = self.model.determine_tower(self.dx, self.dy, self.towers)
         if self.father.distance is not None:
             # self.eval += self.take()
             # self.eval += self.move()
@@ -75,15 +82,11 @@ class State:
     # Moving with no loss !
     def take(self):
         # No loss and no gain
-        print("-------------FATHER INFORMATION------------")
-        print("distance : ", self.father.distance)
-        for t in self.father.towers:
-            print("Towers : ", t[0].x, t[0].y)
-        print("Father's tower : ", self.father.tower[0].x, self.father.tower[0].y)
-        if self.adversary_tower:
-            print("adversary tower : ", self.adversary_tower[0].x, self.adversary_tower[0].y)
 
-        if self.father.distance == len(self.father.tower) and self.adversary_tower == []:
+        # self.father.tower = [0, 0] : BLACK
+        # self.tower = [0 , 0] : WHITE
+        # tower = [1 , 0] : WHITE
+        if self.distance == len(self.father.tower) and self.adversary_tower == []:
             print("NO loss and NO gain!")
             return 0
         # Loss of a tower without gain
@@ -157,30 +160,58 @@ class State:
         return -num
 
     def instant_retake(self):
+        # self.father.tower = [0, 0] : BLACK
         for tower in self.father.towers:
-            if tower != self.father.tower and tower[0].color != self.father.tower[0].color:
-                if len(tower) >= self.father.distance:
+            # print("TOWER : ", tower[0].x, tower[0].y, "| deriv : ", self.tower[0].x, self.tower[0].x)
+
+            # self.tower = [0 , 0] : WHITE
+            # tower = [1 , 0] : WHITE
+            if tower != self.tower and tower[0].color == self.tower[0].color:
+                # print("TOWER FOUND : ", tower[0].x, tower[0].y, tower[0].color)
+                # print("DERIVATIVE TOWER : ", self.tower[0].x, self.tower[0].y, self.tower[0].color)
+                if len(tower) >= self.distance:
+
                     # the tower can instantly retake the tower, but with loss
                     # [w, w, b, b]
                     # [b, b]
-                    if tower[self.father.distance - 1].color != self.model.get_color():
+
+                    # len(tower) == 1
+                    # self.distance == 1        OR self.father.distance ??????
+                    # self.tower[0].x = 0 and self.father.tower[0].x = 0
+                    # self.tower[0].y = 0 and self.father.tower[0].y = 0
+                    if len(tower) == self.distance and self.tower[0].x == self.father.tower[0].x \
+                            and self.tower[0].y == self.father.tower[0].y:
+                        print("RETAKE THE TOWER WITHOUT LOSS : ")
+                        if self.attacker:
+                            return 2
+                        else:
+                            return -2
+                    # If the color of the pawn is equal to the color of the father :
+                    # tower = [1, 0] : White
+                    # self.father.tower[0].color == Black
+                    elif tower[self.distance - 1].color == self.father.tower[0].color \
+                            and self.tower[0].x == self.father.tower[0].x \
+                            and self.tower[0].y == self.father.tower[0].y:
+                        print("RETAKE THE TOWER WITH LOSS : ", tower[0].x, tower[0].y)
                         if self.attacker:
                             return 1
                         else:
                             return -1
-                    # the tower can instantly retake the tower
-                    elif tower[self.father.distance - 1].color == self.model.get_color() and tower[0].x != 1 \
-                            and tower[0].y != 1:
+                    elif tower[self.distance - 1].color != self.father.tower[0].color \
+                            and self.tower[0].x == self.father.tower[0].x \
+                            and self.tower[0].y == self.father.tower[0].y:
+                        print("RETAKE THE TOWER WITHOUT LOSS 2 : ", tower[0].x, tower[0].y)
                         if self.attacker:
-                            return -1
+                            return 2
                         else:
-                            return 1
-                # the tower cannot instantly retake the tower and the tower of the player is not at the middle
-                else:
-                    if self.attacker:
-                        return 2
-                    else:
-                        return -2
+                            return -2
+
+                    elif self.tower[0].x != self.father.tower[0].x and self.tower[0].y != self.father.tower[0].y:
+                        print("CANNOT RETAKE THE TOWER!!")
+                        if self.attacker:
+                            return 0
+                        else:
+                            return 2
         return 0
 
     def end_of_game(self):

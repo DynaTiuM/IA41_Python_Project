@@ -6,7 +6,6 @@ class MinMax:
     def __init__(self, ia, model):
         self.depth = None
         self.tab = [0, None]
-        # self.state = state.State(model, ia, [], 0, 0, 0, True)
         self.ia = ia
         self.model = model
 
@@ -16,7 +15,9 @@ class MinMax:
         self.model.force_turn(self.ia, True)
 
         print("MAX : ", v[0], "| STATE ASSOCIATED : ", v[1].father.tower[0].x, ", ", v[1].father.tower[0].y)
-        v[1] = v[1].father
+        while depth != 1:
+            v[1] = v[1].father
+            depth -= 1
         return v[1]
 
     def determine_state(self, v):
@@ -32,7 +33,7 @@ class MinMax:
             self.model.force_turn(self.ia, True)
 
         print("----------- MAX CALLED -----------", depth)
-        print("AI'S TURN : ", self.model.player2.turn)
+        # print("AI'S TURN : ", self.model.player2.turn)
         if depth != 0:
             self.ia.determine_states(node)      # we determine the  3 children of the node
         if node.children == [] or depth == 0:
@@ -47,11 +48,11 @@ class MinMax:
         for child in node.children:        # For every child of the node
             # BLACK PLAYING
             temp_tab = self.min_value(child, depth - 1)     # temp = the highest value of its children
-            print("Fighting between :", temp_tab[0], "and ", return_state[0])
+            # print("Fighting between :", temp_tab[0], "and ", return_state[0])
             if temp_tab[0] >= return_state[0]:  # If this value is higher than the return_state value :
                 return_state[0] = temp_tab[0]   # We save it
                 return_state[1] = temp_tab[1]   # Also its state position
-                print("return_state : ", return_state[1].dx, return_state[1].dy)
+                # print("return_state : ", return_state[1].dx, return_state[1].dy)
 
         print("- max : ", return_state[0])
 
@@ -62,7 +63,7 @@ class MinMax:
     def min_value(self, node, depth):
         self.model.force_turn(self.ia, False)
         print("----------- MIN CALLED -----------", depth)
-        print("AI'S TURN : ", self.model.player2.turn)
+        # print("AI'S TURN : ", self.model.player2.turn)
         if depth != 0:
             self.ia.determine_states(node)
 
@@ -75,11 +76,11 @@ class MinMax:
         for child in node.children:
             temp_tab = self.max_value(child, depth - 1)
             # print("hierarchy : ", temp_tab[1].depth, " : ", temp_tab[1].x, temp_tab[1].y)
-            print("Fighting between :", temp_tab[0], "and ", return_state[0])
+            # print("Fighting between :", temp_tab[0], "and ", return_state[0])
             if temp_tab[0] <= return_state[0]:
                 return_state[0] = temp_tab[0]
                 return_state[1] = temp_tab[1]
-                print("return_state : ", return_state[1].dx, return_state[1].dy)
+                # print("return_state : ", return_state[1].dx, return_state[1].dy)
 
         print("- min : ", return_state[0])
 
