@@ -2,6 +2,7 @@ class State:
     def __init__(self, model, ia, dx, dy, distance, root=False):
         self.previous_towers = None
         self.previous_tower = None
+        self.distance = None
         self.depth = None
         self.towers = []
         self.tower = []
@@ -48,20 +49,22 @@ class State:
     def evaluation(self, attacker):
         self.attacker = attacker
         self.adversary_tower = self.model.determine_tower(self.tower[0].x, self.tower[0].y, self.father.towers)
+        if self.father.distance is not None:
+            # self.eval += self.take()
+            # self.eval += self.move()
+            self.eval += self.instant_retake()
 
-        self.eval += self.take()
-        # self.eval += self.move()
-        # self.eval += self.instant_retake()
+            # self.sum += self.end_of_game()
+            print("POSITION OF THE PAWN :", self.tower[0].x, self.tower[0].y, "| COLOR : ",
+                  self.tower[0].color, "| HIERARCHY :", self.depth)
 
-        # self.sum += self.end_of_game()
-        print("POSITION OF THE PAWN :", self.tower[0].x, self.tower[0].y, "| COLOR : ",
-              self.tower[0].color, "| HIERARCHY :", self.depth)
+            print("eval : ", self.eval)
+            temp_eval = self.eval
+            self.eval = 0
 
-        print("eval : ", self.eval)
-        temp_eval = self.eval
-        self.eval = 0
+            return temp_eval
 
-        return temp_eval
+        return -999
 
     # [w, b, b, w, b, b]
     # ---> moving 2 :
@@ -72,16 +75,35 @@ class State:
     # Moving with no loss !
     def take(self):
         # No loss and no gain
+        print("-------------FATHER INFORMATION------------")
+        print("distance : ", self.father.distance)
+        for t in self.father.towers:
+            print("Towers : ", t[0].x, t[0].y)
+        print("Father's tower : ", self.father.tower[0].x, self.father.tower[0].y)
+        if self.adversary_tower:
+            print("adversary tower : ", self.adversary_tower[0].x, self.adversary_tower[0].y)
+
         if self.father.distance == len(self.father.tower) and self.adversary_tower == []:
             print("NO loss and NO gain!")
             return 0
-        # No loss and gain
-        elif self.father.tower[self.father.distance - 1].color == self.model.get_color() and self.adversary_tower != [] \
+        # Loss of a tower without gain
+        elif (self.father.distance == len(self.father.tower)
+              or self.father.tower[self.father.distance - 1].color != self.model.get_color()) \
                 and self.father.tower[0].color == self.adversary_tower[0].color:
-            print("NO loss and GAIN!")
+            print("Loss of a tower without gain!!!")
             if self.attacker:
+                return -1
+            else:
+                return -2
+        # No loss and gain
+        elif self.father.tower[self.father.distance - 1].color == self.model.get_color() \
+                and self.adversary_tower != [] \
+                and self.father.tower[0].color == self.adversary_tower[0].color:
+            if self.attacker:
+                print("NO LOSS AND GAIN!!")
                 return 2
             else:
+                print("LOSS AND NO GAIN!!")
                 return -2
         # Loss and gain
         elif self.father.tower[self.father.distance - 1].color != self.model.get_color() and self.adversary_tower != [] \
@@ -93,11 +115,12 @@ class State:
                 return 1
         # Loss and no gain
         else:
-            print("LOSS and NO gain!")
             if self.attacker:
+                print("LOSS and NO gain!")
                 return -2
             else:
-                return -2
+                print("GAIN and NO loss!")
+                return 2
 
     def move(self):
         num = 0
@@ -105,8 +128,8 @@ class State:
         dist = 0
         temp_tower = []
 
-        for pawn in self.tower:
-            if dist != self.distance:
+        for pawn in self.father.tower:
+            if dist != self.father.distance:
                 temp_tower.append(pawn)
                 dist += 1
 
@@ -134,19 +157,19 @@ class State:
         return -num
 
     def instant_retake(self):
-        for tower in self.model.towers:
-            if tower != self.tower and tower[0].color != self.tower[0].color:
-                if len(tower) >= self.distance:
+        for tower in self.father.towers:
+            if tower != self.father.tower and tower[0].color != self.father.tower[0].color:
+                if len(tower) >= self.father.distance:
                     # the tower can instantly retake the tower, but with loss
                     # [w, w, b, b]
                     # [b, b]
-                    if tower[self.distance - 1].color != self.model.get_color():
+                    if tower[self.father.distance - 1].color != self.model.get_color():
                         if self.attacker:
                             return 1
                         else:
                             return -1
                     # the tower can instantly retake the tower
-                    elif tower[self.distance - 1].color == self.model.get_color() and tower[0].x != 1 \
+                    elif tower[self.father.distance - 1].color == self.model.get_color() and tower[0].x != 1 \
                             and tower[0].y != 1:
                         if self.attacker:
                             return -1

@@ -16,8 +16,8 @@ class MinMax:
         self.model.force_turn(self.ia, True)
 
         print("MAX : ", v[0], "| STATE ASSOCIATED : ", v[1].father.tower[0].x, ", ", v[1].father.tower[0].y)
-
-        return v[1].father
+        v[1] = v[1].father
+        return v[1]
 
     def determine_state(self, v):
         print(self.ia.states)

@@ -28,7 +28,7 @@ class IA:
             state_ = minmax.min_max(decided_state, 2)
 
             if state_ is not None:
-                print(" STATE : ", state_.tower[0].x, ", ", state_.tower[0].y)
+                # print(" STATE : ", state_.tower[0].x, ", ", state_.tower[0].y)
                 for t in state_.towers:
                     print(t[0].x, t[0].y)
                 self.model.ref = state_.tower
