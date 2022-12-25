@@ -26,7 +26,7 @@ class IA:
             decided_state.towers = self.model.towers
             decided_state.set_hierarchy(0)
             minmax = MinMax.MinMax(self, self.model)
-            state_ = minmax.min_max(decided_state, 2)
+            state_ = minmax.min_max(decided_state, 3)
 
             if state_ is not None:
                 self.model.towers = state_.towers
