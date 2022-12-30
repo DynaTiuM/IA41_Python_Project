@@ -41,6 +41,7 @@ class View(QMainWindow):
     def paintEvent(self, e):
         p = QtGui.QPainter(self)
         p.setBrush(QtGui.QColor(200, 173, 127))
+
         p.drawRect(0, 0, self.window_size_x, self.window_size_y)
         for i in range(4):
             p.drawLine(0, i * int(self.block_size_y), self.width(), int(i * self.block_size_y))
@@ -50,9 +51,10 @@ class View(QMainWindow):
         winner = self.ref_controller.get_winner()
 
         for t in towers:
+            count = 0
             size = 0.9
-
             for i in reversed(t):
+                count += 1
                 if i.color == 'white':
                     p.setBrush(QtGui.QColor(220, 220, 220))
                     if self.ref_controller.is_selected():
@@ -72,7 +74,7 @@ class View(QMainWindow):
 
         if self.ref_controller.is_winner():
             label_1 = QLabel(winner + " player won!", self)
-            label_1.move(int(self.window_size_x / 7), int(self.window_size_y / 2.5))
+            label_1.move(int(self.window_size_x / 7.5), int(self.window_size_y / 2.5))
             label_1.setFont(QFont('Arial', 50))
             label_1.setFixedHeight(100)
             label_1.setFixedWidth(600)

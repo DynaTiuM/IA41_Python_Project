@@ -15,6 +15,8 @@ class IA:
         self.turn = turn
         self.model = model
 
+        self.minmax = MinMax.MinMax(self, self.model)
+
     def determine_all_towers(self, towers):
         for tower in towers:
             if tower[0].color == self.model.get_color():
@@ -22,11 +24,10 @@ class IA:
 
     def action(self, i, j, towers):
         if not self.model.is_winner():
-            decided_state = state.State(self.model, self, 0, 0, 0, True)
+            decided_state = state.State(self.model, self, None, None, None, True)
             decided_state.towers = self.model.towers
             decided_state.set_hierarchy(0)
-            minmax = MinMax.MinMax(self, self.model)
-            state_ = minmax.min_max(decided_state, 3)
+            state_ = self.minmax.min_max(decided_state, 3)
 
             if state_ is not None:
                 self.model.towers = state_.towers
@@ -37,13 +38,11 @@ class IA:
 
     def determine_states(self, decided_state):
         num_children = 0
-        decided_state_copy = deepcopy(decided_state)
-
         # First, we determine the towers that we can move at the stage of the node
         # At the beginning, the tage is the bord configuration just after the player played
-        self.determine_all_towers(decided_state_copy.towers)
+        self.determine_all_towers(decided_state.towers)
 
-        for t in decided_state_copy.towers:
+        for t in decided_state.towers:
             print("ALL TOWERS IN GAME : ", t[0].x, t[0].y)
         # We print every tower position that we can MOVE
         print("--------------")
@@ -60,17 +59,14 @@ class IA:
             for dx in range(3):
                 for dy in range(3):
 
-                    # We copy the original position of the tower
-                    ref_tower = deepcopy(tower)
-
                     # We calculate the distance between this tower and its derivation
-                    distance = self.model.distance(ref_tower[0].x, ref_tower[0].y, dx, dy)
+                    distance = self.model.distance(tower[0].x, tower[0].y, dx, dy)
 
                     # If this tower has enough pawns, we add a son
-                    if len(ref_tower) >= distance != - 1:
+                    if len(tower) >= distance != - 1:
                         # We print the tower's position and its derivative values
-                        print("Tower's position : ", ref_tower[0].x, ref_tower[0].y, " | derivated in dx and dy :",
-                              dx, dy, " | distance :", distance, "| COLOR : ", ref_tower[0].color)
+                        print("Tower's position : ", tower[0].x, tower[0].y, " | derivated in dx and dy :",
+                              dx, dy, " | distance :", distance, "| COLOR : ", tower[0].color)
 
                         # We add a child to this state
                         child = state.State(self.model, self, dx, dy, distance, False)
@@ -81,8 +77,8 @@ class IA:
 
                         # We move this tower to its derivative position
 
-                        self.model.ref = ref_tower
-                        child.towers = self.model.decide_type_of_moving(dx, dy, distance, decided_state_copy.towers,
+                        self.model.ref = tower
+                        child.towers = self.model.decide_type_of_moving(dx, dy, distance, decided_state.towers,
                                                                         False)
 
                         # We change the position

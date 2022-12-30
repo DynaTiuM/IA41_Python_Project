@@ -1,3 +1,5 @@
+from random import random, randint
+
 import state
 
 
@@ -11,7 +13,7 @@ class MinMax:
         v = self.max_value(node, depth)
         self.model.force_turn(self.ia, True)
 
-        print("MAX : ", v[0])
+        print("MAX : ", v[0], v[1].tower[0].x, v[1].tower[0].y)
         while v[1].depth != 1:
             v[1] = v[1].father
             depth -= 1
@@ -33,16 +35,13 @@ class MinMax:
         if node.children == [] or depth == 0:
             print("- max EVAL : ", node.evaluation(False), node.tower[0].x, node.tower[0].y)
             return [node.evaluation(False), node]
-        # v = -100000
-        # 1st child : v = -2
-        # 2nd child : v = 0
-        # 3rd child : v = 0
+
         return_state = [-10000000, None]
 
         for child in node.children:        # For every child of the node
             # BLACK PLAYING
             temp_tab = self.min_value(child, depth - 1)     # temp = the highest value of its children
-            # print("Fighting between :", temp_tab[0], "and ", return_state[0])
+
             if temp_tab[0] >= return_state[0]:  # If this value is higher than the return_state value :
                 return_state[0] = temp_tab[0]   # We save it
                 return_state[1] = temp_tab[1]   # Also its state position

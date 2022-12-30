@@ -1,6 +1,5 @@
 import controller
 
-
 class Game:
     def __init__(self):
         self.game_mode = None

@@ -1,5 +1,5 @@
 import math
-from copy import copy, deepcopy
+from copy import deepcopy
 
 import pawn
 import ia
@@ -31,6 +31,7 @@ class Model:
             self.player2 = ia.IA("black", False, self)
 
         print("New Model!")
+
         # Creating the towers of white pawns
         for i in range(3):
             self.pawns.append(pawn.Pawn(0, i, 'white'))
@@ -45,15 +46,23 @@ class Model:
             self.towers.append(self.pawns)
             self.pawns = []
 
-        # TO TEST
         '''
-        self.pawns.append(pawn.Pawn(2, 0, 'white'))
-        self.towers.append(self.pawns)
-        self.pawns = []
-
+        # TO TEST
+        
         self.pawns.append(pawn.Pawn(0, 1, 'black'))
         self.towers.append(self.pawns)
         self.pawns = []
+        self.pawns.append(pawn.Pawn(0, 0, 'black'))
+        self.towers.append(self.pawns)
+        self.pawns = []
+
+        self.pawns.append(pawn.Pawn(2, 0, 'white'))
+        self.towers.append(self.pawns)
+        self.pawns = []
+        self.pawns.append(pawn.Pawn(2, 1, 'white'))
+        self.towers.append(self.pawns)
+        self.pawns = []
+
         '''
 
     def __del__(self):
@@ -65,6 +74,20 @@ class Model:
             self.ref_controller.action(None, None)
 
     def force_turn(self, ref_player, forced):
+        if self.mode == 3:
+            if ref_player == self.player2 and forced:
+                self.player2.turn = True
+                self.player1.turn = False
+            elif ref_player == self.player2 and not forced:
+                self.player2.turn = False
+                self.player1.turn = True
+            elif ref_player == self.player1 and forced:
+                self.player2.turn = False
+                self.player1.turn = True
+            elif ref_player == self.player1 and not forced:
+                self.player2.turn = True
+                self.player1.turn = False
+            return
         if ref_player == self.player2 and forced:
             self.player2.turn = True
             self.player1.turn = False
@@ -100,8 +123,6 @@ class Model:
         if self.player1.turn:
             self.player1.turn = False
             self.player2.turn = True
-            # if self.mode != 1:
-            #    self.ref_controller.action(None, None)
         else:
             self.player1.turn = True
             self.player2.turn = False
@@ -164,7 +185,7 @@ class Model:
             return -1
         if dist == 1:
             return 1
-        elif math.sqrt(math.pow(1, 2) + math.pow(2, 2)) - 0.1 < dist < math.sqrt(math.pow(1, 2) + math.pow(2, 2)) + 0.1:
+        elif dist == math.sqrt(math.pow(1, 2) + math.pow(2, 2)):
             return 3
         elif dist < math.sqrt(math.pow(2, 2) + math.pow(2, 2)):
             return 2

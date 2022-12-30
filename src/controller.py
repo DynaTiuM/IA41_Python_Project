@@ -45,3 +45,4 @@ class Controller:
     def launch_ia_vs_ia(self):
         self.model.ia_vs_ia()
         self.ia_vs_ia = True
+

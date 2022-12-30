@@ -24,16 +24,18 @@ class Player:
             elif x != self.temp_x or y != self.temp_y:
                 # number_of_moving corresponds to the number of pawns that we are able to move
                 number_of_moving = self.model.distance(self.temp_x, self.temp_y, x, y)
-                if number_of_moving == - 1:
-                    print("You don't have enough pawns! (", len(self.model.ref), ")")
-                    return
 
-                if len(self.model.ref) >= number_of_moving:
+                if len(self.model.ref) >= number_of_moving != -1:
                     self.clicked = False
                     self.model.send_tower_clicked([])
                     self.model.towers = self.model.decide_type_of_moving(x, y, number_of_moving, self.model.towers, True)
 
-                self.model.switch_players()
+                    self.model.switch_players()
+
+                # The play doesn't have enough pawns
+                else:
+                    print("You don't have enough pawns! (", len(self.model.ref), ")")
+                    return
             # The player wants to change his pawn to move:
             else:
                 self.model.send_tower_clicked([])
