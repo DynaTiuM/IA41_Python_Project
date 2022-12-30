@@ -33,13 +33,6 @@ class State:
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("\n")
 
-    def print_towers(self):
-        pawns = 0
-        for t in self.towers:
-            for p in t:
-                pawns += 1
-        print(pawns)
-
     def determine_new_tower(self):
         for t in self.towers:
             if t[0].x == self.dx and t[0].y == self.dy:
@@ -54,15 +47,14 @@ class State:
     def evaluation(self, attacker):
         self.attacker = attacker
         eval_ = 0
-        eval_ += self.end_of_game()
-
-        if eval_ != 0:
-            return eval_
 
         if self.father.distance is not None:
             eval_ += self.take()
-            eval_ += self.instant_retake()
+            self.value_retake = self.instant_retake()
+            eval_ += self.value_retake
             eval_ += self.move()
+
+            eval_ += self.end_of_game()
 
             print("POSITION OF THE PAWN :", self.tower[0].x, self.tower[0].y, "| COLOR : ",
                   self.tower[0].color, "| HIERARCHY :", self.depth)
@@ -184,15 +176,14 @@ class State:
         for t in self.towers:
             if t[0].color != self.tower[0].color:
                 win = False
-
-        if not win:
-            return 0
-        elif win:
+        if win:
             if self.attacker:
                 print("WIN!")
                 return 999
-            else:
-                print("LOOSE!")
-                return -999
+
+        # The ai is going to loose!
+        if self.value_retake == -1:
+            print("LOSS !")
+            return -100
 
         return 0
