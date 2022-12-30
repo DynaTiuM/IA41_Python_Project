@@ -50,8 +50,7 @@ class State:
 
         if self.father.distance is not None:
             eval_ += self.take()
-            self.value_retake = self.instant_retake()
-            eval_ += self.value_retake
+            eval_ += self.instant_retake()
             eval_ += self.move()
 
             eval_ += self.end_of_game()
@@ -176,14 +175,11 @@ class State:
         for t in self.towers:
             if t[0].color != self.tower[0].color:
                 win = False
-        if win:
-            if self.attacker:
-                print("WIN!")
-                return 999
 
-        # The ai is going to loose!
-        if self.value_retake == -1:
-            print("LOSS !")
-            return -100
-
-        return 0
+        if not win:
+            return 0
+        if self.attacker:
+            print("WIN!")
+            return 100
+        print("LOOSE!")
+        return -100
