@@ -8,16 +8,16 @@ class Game:
 
     def ask(self):
         answer = ''
-        while answer != 'players' and answer != 'ia and player' and answer != 'ia':
-            answer = input("Choose your mode, players, ia and player or ia :")
+        while answer != 'players' and answer != 'ai and player' and answer != 'ais':
+            answer = input("Choose your mode, players, ai and player or ais :")
             if answer == 'players':
                 print("You chose players mode")
                 self.game_mode = 1
-            if answer == 'ia and player':
+            if answer == 'ai and player':
                 print("You chose ia and player mode")
                 self.game_mode = 2
-            if answer == 'ia':
-                print("You chose ia mode")
+            if answer == 'ais':
+                print("You chose ais mode")
                 self.game_mode = 3
 
         self.controller = controller.Controller(self.game_mode)
