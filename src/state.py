@@ -1,5 +1,5 @@
 class State:
-    def __init__(self, model, ia, x, y, distance, root=False):
+    def __init__(self, model, ia, dx, dy, distance, root=False):
         self.prev_tower = self.prev_x = self.prev_y = self.previous_towers = self.previous_tower = self.distance = None
         self.depth = self.father = None
         self.towers = []
@@ -10,8 +10,8 @@ class State:
         self.root = root
         self.children = []
         if not root:
-            self.x = x
-            self.y = y
+            self.dx = dx
+            self.dy = dy
             self.distance = distance
 
         self.model = model
@@ -42,7 +42,7 @@ class State:
 
     def determine_new_tower(self):
         for t in self.towers:
-            if t[0].x == self.x and t[0].y == self.y:
+            if t[0].x == self.dx and t[0].y == self.dy:
                 self.tower = t
 
     def set_father(self, father):
@@ -71,16 +71,22 @@ class State:
 
         return eval_
 
+    # [w, b, b, w, b, b]
+    # ---> moving 2 :
+    # [b, w, b, b]
+    #  ^
+    # /|\
+    #  |
+    # Moving with no loss !
     def take(self):
-        num = 0
-        tower = self.prev_tower
-        deriv_tower = self.tower
+        print("PREVIOUS X AND Y : ", self.father.prev_tower[0].x, self.father.prev_tower[0].y, self.father.prev_tower[0].color)
+        print("ACTUAL X AND Y : ", self.father.tower[0].x, self.father.tower[0].y, self.father.tower[0].color)
+        distance = self.model.distance(self.father.prev_tower[0].x, self.father.prev_tower[0].y,
+                                       self.father.tower[0].x, self.father.tower[0].y)
+        tower = self.father.prev_tower
+        deriv_tower = self.father.tower
 
-        print("PREVIOUS X AND Y : ", tower[0].x, tower[0].y, "color : ", tower[0].color)
-        print("ACTUAL X AND Y : ", deriv_tower[0].x, deriv_tower[0].y, "color : ", deriv_tower[0].color)
-
-        distance = self.model.distance(tower[0].x, tower[0].y, deriv_tower[0].x, deriv_tower[0].y)
-        self.adversary_tower = self.model.determine_tower(deriv_tower[0].x, deriv_tower[0].y, self.father.towers)
+        self.adversary_tower = self.model.determine_tower(deriv_tower[0].x, deriv_tower[0].y, self.father.father.towers)
 
         if self.adversary_tower:
             print("ADVERSARY TOWER :", self.adversary_tower[0].x, self.adversary_tower[0].y,
@@ -90,35 +96,34 @@ class State:
         # TAKE WITH NO LOSS :
         if len(tower) == distance and self.adversary_tower == []:
             print("NO TAKE WITH NO LOSS!")
-            num = 0
+            return 0
         elif len(tower) == distance and self.adversary_tower[0].color != tower[0].color:
             print("TAKE WITH NO LOSS!")
-            num = 3
+            return 10
         elif len(tower) == distance and self.adversary_tower[0].color == tower[0].color:
             print("LOOSING A TOWER!!")
-            num = -2
+            return -10
         elif tower[distance].color == tower[0].color and self.adversary_tower == []:
             print("NO TAKE WITH NO LOSS 2!")
-            num = 0
+            return 0
         elif tower[distance].color == tower[0].color and self.adversary_tower[0].color != tower[0].color:
             print("TAKE WITH NO LOSS 2!")
-            num = 3
+            return 10
         elif tower[distance].color != tower[0].color and self.adversary_tower == []:
             print("NO TAKE WITH LOSS !!")
-            num = -2
+            return -4
         elif tower[distance].color != tower[0].color and self.adversary_tower[0].color != tower[0].color:
             print("TAKE WITH LOSS !!")
-            num = -1
+            return -1
         elif tower[distance].color != tower[0].color and self.adversary_tower[0].color == tower[0].color:
             print("LOOSING A TOWER 2!!")
-            num = -2
+            return -5
         elif tower[distance].color == tower[0].color and self.adversary_tower[0].color == tower[0].color:
             print("MOVING ON A SAME COLOR TOWER AND NO LOOSE!!")
-            num = -1
+            return -4
 
-        if self.attacker:
-            return num
-        return -num
+        print("PROBLEM")
+        return 0
 
     def move(self):
         num = 0
@@ -137,12 +142,7 @@ class State:
                     num = 0
             else:
                 num = 2
-
-        if self.attacker:
-            print("MOVE : ", num)
-            return num
-        print("MOVE : ", -num)
-        return -num
+        return num
 
     def instant_retake(self):
         num = 1000
@@ -158,46 +158,25 @@ class State:
                 distance = self.model.distance(tower[0].x, tower[0].y, self.tower[0].x, self.tower[0].y)
 
                 if len(tower) == distance:
-                    if self.attacker:
-                        if num > -1:
-                            num = -1
-                            print("RETAKE THE TOWER WITHOUT LOSS : ", num)
-                    else:
-                        if num > 1:
-                            num = 1
-                            print("RETAKE THE TOWER WITHOUT LOSS : ", num)
+                    if num > -1:
+                        num = -1
+                        print("RETAKE THE TOWER WITHOUT LOSS : ", num)
 
                 elif len(tower) > distance != -1:
                     if tower[distance].color == self.tower[0].color:
-                        if self.attacker:
-                            if num > 1:
-                                num = 1
-                                print("RETAKE THE TOWER WITH LOSS : ", num)
-                        else:
-                            if num > -1:
-                                num = -1
-                                print("RETAKE THE TOWER WITH LOSS : ", num)
-                    else:
-                        if self.attacker:
-                            if num > -1:
-                                num = -1
-                                print("RETAKE THE TOWER WITHOUT LOSS 2 : ", num)
-                        else:
-                            if num > 1:
-                                num = 1
-                                print("RETAKE THE TOWER WITHOUT LOSS 2 : ", num)
-                else:
-                    if self.attacker:
                         if num > 2:
                             num = 2
-                            print("CANNOT RETAKE THE TOWER!!", num)
+                            print("RETAKE THE TOWER WITH LOSS : ", num)
                     else:
-                        if num > -2:
-                            num = -2
-                            print("CANNOT RETAKE THE TOWER!!", num)
+                        if num > -1:
+                            num = -1
+                            print("RETAKE THE TOWER WITHOUT LOSS 2 : ", num)
+                else:
+                    if num > 3:
+                        num = 3
+                        print("CANNOT RETAKE THE TOWER!!", num)
         if num == 1000:
             num = 0
-
         return num
 
     def end_of_game(self):
@@ -208,8 +187,12 @@ class State:
 
         if not win:
             return 0
-        if self.attacker:
-            print("WIN!")
-            return 100
-        print("LOOSE!")
-        return -100
+        elif win:
+            if self.attacker:
+                print("WIN!")
+                return 999
+            else:
+                print("LOOSE!")
+                return -999
+
+        return 0

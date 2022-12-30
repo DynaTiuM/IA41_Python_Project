@@ -32,6 +32,7 @@ class Model:
 
         print("New Model!")
 
+
         # Creating the towers of white pawns
         for i in range(3):
             self.pawns.append(pawn.Pawn(0, i, 'white'))
@@ -52,18 +53,10 @@ class Model:
         self.pawns.append(pawn.Pawn(0, 1, 'black'))
         self.towers.append(self.pawns)
         self.pawns = []
-        self.pawns.append(pawn.Pawn(0, 0, 'black'))
-        self.towers.append(self.pawns)
-        self.pawns = []
-
         self.pawns.append(pawn.Pawn(2, 0, 'white'))
         self.towers.append(self.pawns)
         self.pawns = []
-        self.pawns.append(pawn.Pawn(2, 1, 'white'))
-        self.towers.append(self.pawns)
-        self.pawns = []
-
-        '''
+'''
 
     def __del__(self):
         self.pawns.clear()
