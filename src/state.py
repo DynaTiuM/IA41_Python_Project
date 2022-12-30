@@ -117,7 +117,7 @@ class State:
             return -1
         elif tower[distance].color != tower[0].color and self.adversary_tower[0].color == tower[0].color:
             print("LOOSING A TOWER 2!!")
-            return -5
+            return -10
         elif tower[distance].color == tower[0].color and self.adversary_tower[0].color == tower[0].color:
             print("MOVING ON A SAME COLOR TOWER AND NO LOOSE!!")
             return -4
@@ -164,16 +164,16 @@ class State:
 
                 elif len(tower) > distance != -1:
                     if tower[distance].color == self.tower[0].color:
-                        if num > 2:
-                            num = 2
+                        if num > 1:
+                            num = 1
                             print("RETAKE THE TOWER WITH LOSS : ", num)
                     else:
                         if num > -1:
                             num = -1
                             print("RETAKE THE TOWER WITHOUT LOSS 2 : ", num)
                 else:
-                    if num > 3:
-                        num = 3
+                    if num > 2:
+                        num = 2
                         print("CANNOT RETAKE THE TOWER!!", num)
         if num == 1000:
             num = 0
