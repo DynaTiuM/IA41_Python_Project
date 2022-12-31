@@ -24,75 +24,52 @@ class IA:
 
     def action(self, i, j, towers):
         if not self.model.is_winner():
+            # We instantiate the state that will be decided at the end of the travel of MinMax's algorithm
             decided_state = state.State(self.model, self, None, None, None, True)
+            # This initial state possess the actual towers of this game
             decided_state.towers = self.model.towers
+            # It is the root of the tree, so we set it at hierarchy 0
             decided_state.set_hierarchy(0)
-            state_ = self.minmax.min_max(decided_state, 3)
+            # We determine the state that the MinMax algorithm has found in relation to the decided state
+            state_ = self.minmax.min_max(decided_state, 2)
 
             if state_ is not None:
+                # This state_ found possess a list of towers, in relation to the best play possible, so we just
+                # need to replace the actual towers position to the state's ones found.
                 self.model.towers = state_.towers
+                # We don't forget to switch the players at the end
                 self.model.switch_players()
 
+        # We check if there is a winner
         self.model.check_win()
         return
 
     def determine_states(self, decided_state):
-        num_children = 0
-        # First, we determine the towers that we can move at the stage of the node
-        # At the beginning, the tage is the bord configuration just after the player played
+
+        # We determine the towers that the ai is able to move
         self.determine_all_towers(decided_state.towers)
 
-        for t in decided_state.towers:
-            print("ALL TOWERS IN GAME : ", t[0].x, t[0].y)
-        # We print every tower position that we can MOVE
-        print("--------------")
-        print("towers :")
-        for t in self.towers_to_examine:
-            print(t[0].x, t[0].y)
-        print("--------------")
-
-        # We only work with the towers that the IA is able to move
-        # i.e. the towers with the color black on the pawn at the first position of the tower
+        # For each of them, we check the moves that they are able to do
         for tower in self.towers_to_examine:
-            print("TOWER'S POSITION : ", tower[0].x, tower[0].y, "| COLOR OF THE PLAYER :", tower[0].color)
-            # We travel all the game bord to see if the tower is able to move at that point
+            # To do so, we travel a "fictional [3, 3]" two dimensial array
             for dx in range(3):
                 for dy in range(3):
-
-                    # We calculate the distance between this tower and its derivation
+                    # And for each position, we calculate the distance between the tower and the destination
                     distance = self.model.distance(tower[0].x, tower[0].y, dx, dy)
 
-                    # If this tower has enough pawns, we add a son
+                    # If the tower is able to move to this position :
                     if len(tower) >= distance != - 1:
-                        # We print the tower's position and its derivative values
-                        print("Tower's position : ", tower[0].x, tower[0].y, " | derivated in dx and dy :",
-                              dx, dy, " | distance :", distance, "| COLOR : ", tower[0].color)
-
-                        # We add a child to this state
+                        # We add a new child to the tree with its characteristics
                         child = state.State(self.model, self, dx, dy, distance, False)
                         decided_state.add_child(child)
                         child.set_prev_tower(tower)
                         child.set_father(decided_state)
                         child.set_hierarchy(child.father.depth + 1)
 
-                        # We move this tower to its derivative position
-
                         self.model.ref = tower
                         child.towers = self.model.decide_type_of_moving(dx, dy, distance, decided_state.towers,
                                                                         False)
 
-                        # We change the position
                         child.determine_new_tower()
 
-                        # print("NUMBER OF TOWERS : ", child.tower[0].x, child.tower[0].y)
-                        # child.print_towers()
-
-                        num_children += 1
-        print("Number of children :", num_children)
         self.towers_to_examine.clear()
-
-    def determine_tower(self, dx, dy):
-        for s in self.states:
-            if s.dx == dx and s.dy == dy:
-                return s.tower
-        return []

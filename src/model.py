@@ -20,6 +20,7 @@ class Model:
         self.ref_controller = ref_controller
         self.mode = mode
 
+        # Depending on the mode selected, we instantiate players or ais
         if mode == 1:
             self.player1 = player.Player("white", True, self)
             self.player2 = player.Player("black", False, self)
@@ -45,7 +46,6 @@ class Model:
             self.pawns.append(pawn.Pawn(2, i, 'black'))
             self.towers.append(self.pawns)
             self.pawns = []
-
 
     def __del__(self):
         self.pawns.clear()
@@ -120,6 +120,9 @@ class Model:
         return self.move_to(number_of_moving, x, y, [], towers, True, player_)
 
     def move_to(self, amount, x, y, tower, towers, is_free, player_):
+
+        # If it is a ai that is playing, we don't want to work direclty with the actual towers of the game
+        # So we make copies of tower and towers
         if not player_:
             tower = deepcopy(tower)
             towers = deepcopy(towers)
@@ -127,6 +130,7 @@ class Model:
                 if self.ref[0].x == t[0].x and self.ref[0].y == t[0].y:
                     self.ref = t
 
+        # We travel the tower that we want to move :
         for i in range(amount):
             # New position of the pawns
             self.ref[0].x = x
@@ -137,6 +141,7 @@ class Model:
             # We remove the pawn from the latest location
             self.ref.pop(0)
 
+        # The destination is not free :
         if not is_free:
             self.pawns += tower
             for t in towers:
@@ -154,8 +159,10 @@ class Model:
             # We remove it from the towers list
             towers.remove(self.ref)
 
+        # The destination is free :
         if is_free:
             towers.append(self.pawns)
+
         self.pawns = []
         self.ref = None
 
